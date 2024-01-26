@@ -28,7 +28,7 @@ public class TankMover : Mover
 
     public override void Rotate(float turnSpeed)
     {
-        tf.Rotate(0, turnSpeed, 0);
+        tf.Rotate(0, turnSpeed * Time.deltaTime, 0);
     }
 
 }
