@@ -13,6 +13,12 @@ public class PlayerController : Controller
     // Start is called before the first frame update
     public override void Start()
     {
+        // Check if we have a Game Manager // If the instance doesn't exist yet...
+        if(GameManager.instance != null)
+        {
+            // Register this player with the List in the Game Manager
+            GameManager.instance.players.Add(this);
+        }
         // Run the Start() fx from the parent (base) class
         base.Start();
     }
@@ -28,7 +34,7 @@ public class PlayerController : Controller
         base.Update();
     }
 
-    public void ProcessInputs() // I'm not sure why we do this?
+    public override void ProcessInputs() // I'm not sure why we do this?
     {
         // Create a conditional that checks every frame (above) to see if the player has pressed X key within controller
         if (Input.GetKey(moveForwardKey))
@@ -50,6 +56,18 @@ public class PlayerController : Controller
         if (Input.GetKey(rotateCounterClockwiseKey))
         {
             pawn.RotateCounterClockwise();
+        }
+    }
+
+    // Create a function that tells the Game Manager when this player has died, thus removing it from the players List
+    // OnDestroy() is not a custom function in Unity C#. We don't have to write a separate command to call this function.
+    public void OnDestroy()
+    {
+        // Instance tracking the destroyed player
+        if (GameManager.instance.players != null)
+        {
+            // Deregister with the Game Manager
+            GameManager.instance.players.Remove(this);
         }
     }
 
