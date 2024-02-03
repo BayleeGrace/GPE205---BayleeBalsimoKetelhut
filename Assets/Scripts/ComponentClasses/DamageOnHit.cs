@@ -36,6 +36,5 @@ public class DamageOnHit : MonoBehaviour
 
         // Destroy object
         Destroy(gameObject);
-        
     }
 }

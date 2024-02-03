@@ -5,11 +5,12 @@ using UnityEngine;
 public class TankShooter : Shooter
 {
     public Transform firepointTransform;
+    public GameObject tankShellPrefab;
     
     // Start is called before the first frame update
     public override void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -18,12 +19,12 @@ public class TankShooter : Shooter
         
     }
 
-    public override void Shoot(GameObject shellPrefab, float fireForce, float damageDone, float lifespan)
+    public override void Shoot(GameObject tankShellPrefab, float fireForce, float damageDone, float lifespan)
     {
         // Instantiate our projectile
-        GameObject newShell = Instantiate(shellPrefab, firepointTransform.position, firepointTransform.rotation) as GameObject;
+        GameObject newShell = Instantiate(tankShellPrefab, firepointTransform.position, firepointTransform.rotation) as GameObject;
         // Grab the "DamageOnHit" component
-        DamageOnHit damageOnHit = newShell.GetComponent<DamageOnHit>();
+        DamageOnHit damageOnHit = newShell.AddComponent<DamageOnHit>();
 
         // If it has one
         if (damageOnHit != null)
@@ -40,5 +41,7 @@ public class TankShooter : Shooter
         {
             rigidbody.AddForce(firepointTransform.forward * fireForce);
         }
+        Destroy(newShell, lifespan);
+        
     }
 }
