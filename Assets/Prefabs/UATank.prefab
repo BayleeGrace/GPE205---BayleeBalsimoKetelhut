@@ -149,7 +149,7 @@ MonoBehaviour:
   shooter: {fileID: 0}
   tankShellPrefab: {fileID: 8063939962284642360, guid: 944d17993a4db48f4821cc89aa3436c9, type: 3}
   fireForce: 750
-  damageDone: 50
+  damageDone: 25
   lifespan: 1.5
 --- !u!114 &6766521778717739339
 MonoBehaviour:

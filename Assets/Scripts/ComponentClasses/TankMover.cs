@@ -17,7 +17,6 @@ public class TankMover : Mover
         tf = GetComponent<Transform>();
     }
 
-    // Update is called once per frame
     public override void Move(Vector3 direction, float speed)
     {
         // This line takes the class this component inherits, normalizes the whole vector, and moves it according to the speed per second

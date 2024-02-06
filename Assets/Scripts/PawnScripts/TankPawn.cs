@@ -54,4 +54,14 @@ public class TankPawn : Pawn
         shooter.Shoot(tankShellPrefab, fireForce, damageDone, lifespan);
     }
 
+    public override void RotateTowards(Vector3 targetPosition)
+    {
+        // find the vector to the target
+        Vector3 vectorToTarget = targetPosition - transform.position;
+        // find the rotation to look down that vector
+        Quaternion targetRotation = Quaternion.LookRotation(vectorToTarget, Vector3.up);
+        // Rotate closer to that vector, but not more than turn speed allows in a single frame
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+    }
+
 }
