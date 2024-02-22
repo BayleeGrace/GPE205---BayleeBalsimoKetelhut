@@ -5,23 +5,16 @@ using UnityEngine;
 // Since this is a component, must identify as abstract (see below)
 public abstract class Pawn : MonoBehaviour
 {
-    // Variable for move speed, public so designers can change
-    public float moveSpeed;
-    // Variable for turn speed, public so designers can change
-    public float turnSpeed;
-    // We need a variable for our Pawn to hold our Mover component
-    public Mover mover;
+    public float moveSpeed; // Variable for move speed, public so designers can change
+    public float turnSpeed; // Variable for turn speed, public so designers can change
+    public Mover mover; // We need a variable for our Pawn to hold our Mover component
 
-    // Start is called BEFORE the first frame update
-    // Use virtual in case we might override Start in our child functions
-    public virtual void Start()
+    public virtual void Start() // Use virtual in case we might override Start in our child functions
     {
         mover = GetComponent<Mover>();
     }
 
-    // Update is called ONCE per FRAME
-    // Use virtual in case we might override Start in our child functions
-    public virtual void Update()
+    public virtual void Update() // Use virtual in case we might override Start in our child functions
     {
         
     }

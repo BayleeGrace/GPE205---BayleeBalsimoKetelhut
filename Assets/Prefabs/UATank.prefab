@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 2535482313733260803}
   - component: {fileID: 6766521778717739339}
   - component: {fileID: 3663038325855170466}
+  - component: {fileID: 1831407855965853665}
   m_Layer: 0
   m_Name: UATank
   m_TagString: Untagged
@@ -146,7 +147,7 @@ MonoBehaviour:
   moveSpeed: 5
   turnSpeed: 135
   mover: {fileID: 2535482313733260802}
-  shooter: {fileID: 0}
+  shooter: {fileID: 6766521778717739339}
   tankShellPrefab: {fileID: 8063939962284642360, guid: 944d17993a4db48f4821cc89aa3436c9, type: 3}
   fireForce: 750
   damageDone: 25
@@ -179,6 +180,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 0
+  canOverheal: 1
+--- !u!114 &1831407855965853665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3453907330998941506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c67610d661b84d51b4563dffc163121, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4957249818723534923
 GameObject:
   m_ObjectHideFlags: 0

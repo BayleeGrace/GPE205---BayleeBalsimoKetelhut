@@ -6,43 +6,47 @@ public class AIController : Controller
 {
     // An enum is less taxing on the system like an int, but gives the string to other programmers to understand.
     // Each str is being stored as a numeric value (Guard = 1, Chase = 2, etc.)
+
     public enum AIState { Idle, Chase, Flee, Patrol, Attack, Scan, BackToPost };
-
     public AIState currentState;
-
-    // Variable for tracking how long it takes for states to change
-    private float lastStateChangeTime;
+    private float lastStateChangeTime; // Variable for tracking how long it takes for states to change
+    public GameObject target; // Stores the target that the AIController will be seeking
     
-    // Start is called before the first frame update
     public override void Start()
     {
         currentState = AIState.Idle;
+        ChangeState(AIState.Idle);
         base.Start();
     }
 
-    // Update is called once per frame
     public override void Update()
     {
         ProcessInputs();
-        
         base.Update();
     }
 
-    public override void ProcessInputs()
+    public override void ProcessInputs() // this is overriding the Controller "ProcessInputs()"
     {
-        Debug.Log("Making Decisions...");
         
-        // Switch changes states
-        switch(currentState)
+        switch(currentState) // Switch changes states
         {
             case AIState.Idle:
                 // Do work for the Idle state
                 DoIdleState();
+                if(IsDistanceLessThan(target, 20))
+                {
+                    ChangeState(AIState.Chase);
+                }
                 //Check for any transitions
                 break;
-                // break; is important because it will only execute the "Guard" state before executing the other states.
+                // break; is important because it will only execute the "Idle" state before executing the other states.
 
             case AIState.Chase:
+                DoSeekState();
+                if(!IsDistanceLessThan(target, 20))
+                {
+                    ChangeState(AIState.Idle);
+                }
                 break;
 
             case AIState.Flee:
@@ -52,6 +56,11 @@ public class AIController : Controller
                 break;
 
             case AIState.Attack:
+                DoAttackState(target, 10);
+                if (target = null)
+                {
+                    ChangeState(AIState.Patrol);
+                }
                 break;
 
             case AIState.Scan:
@@ -62,29 +71,53 @@ public class AIController : Controller
         }
     }
 
-    protected void DoIdleState()
+    protected void DoIdleState() // This is a function that runs the IDLE state, not the action of being idle
     {
         // Do nothing
     }
 
-    protected void DoChaseState()
+    protected void DoSeekState()
     {
         // Seek our target
+        Seek(target);
     }
-
+    
     public void Seek(GameObject target)
     {
-        // This function takes a game object as a target
+        // Chase a GAMEOBJECT's position
+        if(target != null)
+        {
+        currentState = AIState.Chase;
         // Rotate towards the target
-
+        pawn.RotateTowards(target.transform.position);
         // Move Forward towards the target
-
-        // 
+        pawn.MoveForward();
+        }
     }
 
-    public void Seek(Vector3 targetPosition)
+    //public void Seek(Transform targetTransform)
+    //{
+        // Chase a TRANSFORM's position
+        //Seek(targetTransform.position);
+    //}
+
+    //public void Seek(Pawn targetPawn)
+    //{
+        // Chase a PAWN's position
+        //Seek(targetPawn.transform);
+    //}
+
+    protected void DoChaseState(Vector3 targetPosition)
     {
         // Do Seek Behavior (seek a certain position)
+    }
+
+    public void DoAttackState(GameObject target, float distance)
+    {
+        if (target != null)
+        {
+            pawn.Shoot();
+        }
     }
 
     protected bool IsDistanceLessThan(GameObject target, float distance)
