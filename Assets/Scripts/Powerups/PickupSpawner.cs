@@ -22,13 +22,13 @@ public class PickupSpawner : MonoBehaviour
         {
             if (Time.time > nextSpawnTime)
             {
-                Instantiate(pickupPrefab, transform.position, Quaternion.identity);
+                spawnedPickup = Instantiate(pickupPrefab, transform.position, Quaternion.identity);
                 nextSpawnTime = Time.time + spawnDelay;
             }
-            else
-            {
-                nextSpawnTime = Time.time + spawnDelay;
-            }
+        }
+        else
+        {
+            nextSpawnTime = Time.time + spawnDelay;
         }
     }
 }
