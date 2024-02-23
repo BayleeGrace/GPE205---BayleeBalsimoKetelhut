@@ -7,7 +7,7 @@ public class AIController : Controller
     // An enum is less taxing on the system like an int, but gives the string to other programmers to understand.
     // Each str is being stored as a numeric value (Guard = 1, Chase = 2, etc.)
 
-    public enum AIState { Idle, Chase, Flee, Patrol, Attack, Scan, BackToPost };
+    public enum AIState { Idle, Seek, Flee, Patrol, Attack, Scan, BackToPost };
     public AIState currentState;
     private float lastStateChangeTime; // Variable for tracking how long it takes for states to change
     public GameObject target; // Stores the target that the AIController will be seeking
@@ -35,13 +35,13 @@ public class AIController : Controller
                 DoIdleState();
                 if(IsDistanceLessThan(target, 20))
                 {
-                    ChangeState(AIState.Chase);
+                    ChangeState(AIState.Seek);
                 }
                 //Check for any transitions
                 break;
                 // break; is important because it will only execute the "Idle" state before executing the other states.
 
-            case AIState.Chase:
+            case AIState.Seek:
                 DoSeekState();
                 if(!IsDistanceLessThan(target, 20))
                 {
@@ -56,7 +56,7 @@ public class AIController : Controller
                 break;
 
             case AIState.Attack:
-                DoAttackState(target, 10);
+                DoAttackState();
                 if (target = null)
                 {
                     ChangeState(AIState.Patrol);
@@ -69,6 +69,7 @@ public class AIController : Controller
             case AIState.BackToPost:
                 break;
         }
+
     }
 
     protected void DoIdleState() // This is a function that runs the IDLE state, not the action of being idle
@@ -87,11 +88,18 @@ public class AIController : Controller
         // Chase a GAMEOBJECT's position
         if(target != null)
         {
-        currentState = AIState.Chase;
-        // Rotate towards the target
-        pawn.RotateTowards(target.transform.position);
-        // Move Forward towards the target
-        pawn.MoveForward();
+            if(IsDistanceLessThan(target, 10))
+                {
+                    ChangeState(AIState.Attack);
+                }
+                else
+                {
+                    currentState = AIState.Seek;
+                    // Rotate towards the target
+                    pawn.RotateTowards(target.transform.position);
+                    // Move Forward towards the target
+                    pawn.MoveForward();
+                }
         }
     }
 
@@ -107,15 +115,21 @@ public class AIController : Controller
         //Seek(targetPawn.transform);
     //}
 
-    protected void DoChaseState(Vector3 targetPosition)
-    {
+    //public void Seek(GameObject targetTransform)
+    //{
         // Do Seek Behavior (seek a certain position)
-    }
+        //targetTransform = target.GetComponent<Transform>();
+        //if (targetTransform != null)
+        //{
+            //Seek(targetTransform.position);
+        //}
+    //}
 
-    public void DoAttackState(GameObject target, float distance)
+    public void DoAttackState()
     {
         if (target != null)
         {
+            Seek(target);
             pawn.Shoot();
         }
     }

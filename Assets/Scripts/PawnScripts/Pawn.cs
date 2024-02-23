@@ -8,6 +8,7 @@ public abstract class Pawn : MonoBehaviour
     public float moveSpeed; // Variable for move speed, public so designers can change
     public float turnSpeed; // Variable for turn speed, public so designers can change
     public Mover mover; // We need a variable for our Pawn to hold our Mover component
+    public float fireRate;
 
     public virtual void Start() // Use virtual in case we might override Start in our child functions
     {
