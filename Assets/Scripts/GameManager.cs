@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
 
     // Creates a LIST of players, even if the game is going to be single player
     public List<PlayerController> players;
+    public List<AIController> AIControllers;
     
     // Create a game object that holds this game manager
     private void Awake()

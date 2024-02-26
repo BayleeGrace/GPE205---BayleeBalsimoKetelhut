@@ -85,8 +85,9 @@ public class OffensiveAIController : AIController
 
     // Chase State
 
-    public void DoChaseState()
+    public override void DoChaseState()
     {
+        base.DoChaseState();
         // Seek our target
         if (target != null)
         {
@@ -100,8 +101,9 @@ public class OffensiveAIController : AIController
 
     // Attack State
     
-    public void DoAttackState()
+    public override void DoAttackState()
     {
+        base.DoAttackState();
         if (target != null)
         {
             // Chase
@@ -109,7 +111,7 @@ public class OffensiveAIController : AIController
             // Shoot
             pawn.Shoot();
         }
-        else if (target = null)
+        else if (target == null)
         {
             ChangeState(AIState.Patrol);
         }

@@ -7,7 +7,7 @@ public abstract class AIController : Controller
     // An enum is less taxing on the system like an int, but gives the string to other programmers to understand.
     // Each str is being stored as a numeric value (Guard = 1, Chase = 2, etc.)
 
-    public enum AIState { Idle, Chase, Patrol, Attack, Flee, BackToPost };
+    public enum AIState { Idle, Chase, Patrol, Attack, Flee, Hide, Enraged };
 
     // State variables
     public AIState currentState;
@@ -22,6 +22,11 @@ public abstract class AIController : Controller
     public float hearingDistance;
 
     public float fieldOfView;
+    public float maxViewDistance;
+
+    public GameObject lastHit;
+    public Vector3 collision = Vector3.zero;
+
     
     public override void Start()
     {
@@ -34,6 +39,7 @@ public abstract class AIController : Controller
     public override void Update()
     {
         ProcessInputs();
+        CheckRaycast();
         base.Update();
     }
 
@@ -54,7 +60,18 @@ public abstract class AIController : Controller
                 DoPatrolState();
                 currentState = AIState.Patrol;
                 // Check for transitions
-                
+                if (IsInLineOfSight(target) && IsCanSee(target))
+                {
+                    ChangeState(AIState.Attack);
+                }
+                break;
+
+            case AIState.Attack:
+                DoAttackState();
+                if(!IsInLineOfSight(target))
+                {
+                    ChangeState(AIState.Patrol);
+                }
                 break;
 
         }
@@ -63,7 +80,7 @@ public abstract class AIController : Controller
 
     // Idle State
 
-    protected void DoIdleState() // This is a function that runs the IDLE state, not the action of being idle
+    public void DoIdleState() // This is a function that runs the IDLE state, not the action of being idle
     {
         
     }
@@ -101,7 +118,7 @@ public abstract class AIController : Controller
 
     // Patrol State
 
-    protected void DoPatrolState()
+    public virtual void DoPatrolState()
     {
         if(IsHasTarget())
         {
@@ -110,7 +127,7 @@ public abstract class AIController : Controller
             {
                 // Then seek that waypoint
                 Seek(patrolWaypoints[currentWaypoint]);
-                if (Vector3.Distance(pawn.transform.position, patrolWaypoints[currentWaypoint].position) < waypointStopDistance)
+                if (Vector3.Distance(pawn.transform.position, patrolWaypoints[currentWaypoint].position) <= waypointStopDistance)
                 {
                     currentWaypoint++;
                 }
@@ -130,6 +147,41 @@ public abstract class AIController : Controller
     {
         // Reset the current array index back to 0
         currentWaypoint = 0;
+    }
+
+    // Chase State
+
+    public virtual void DoChaseState()
+    {
+        
+    }
+
+    // Attack State
+
+    public virtual void DoAttackState()
+    {
+        Debug.Log(pawn.name + "Is Attacking...");
+    }
+
+    // Flee State
+
+    public virtual void DoFleeState()
+    {
+
+    }
+
+    // Hide State
+
+    public virtual void DoHideState()
+    {
+
+    }
+
+    // Enraged
+
+    public virtual void DoEnragedState()
+    {
+
     }
 
     // Compare distance between this object and target game object
@@ -218,5 +270,34 @@ public abstract class AIController : Controller
         {
             return false;
         }
+    }
+
+    public void CheckRaycast()
+    {
+        var ray= new Ray(pawn.transform.position, pawn.transform.forward);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, 100))
+        {
+            lastHit = hit.transform.gameObject;
+            collision = hit.point;
+        }
+    }
+
+    public bool IsInLineOfSight(GameObject target)
+    {
+        if (target == lastHit)
+        {
+            return true;
+        }
+        else{
+            return false;
+        }
+        
+        //Ray agentRay = new Ray(transform.position, transform.forward);
+        //Debug.DrawRay(agentRay.origin, agentRay.direction * 10);
+        //if (Physics.Raycast(ray, out RaycastHit hitData))
+        //{
+            //Debug.Log(hit.collider.gameObject.name + " was hit!")
+        //}
     }
 }
