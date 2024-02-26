@@ -9,10 +9,13 @@ public abstract class Pawn : MonoBehaviour
     public float turnSpeed; // Variable for turn speed, public so designers can change
     public Mover mover; // We need a variable for our Pawn to hold our Mover component
     public float fireRate;
+    public NoiseMaker noiseMaker;
+    public float noiseMakerVolume;
 
     public virtual void Start() // Use virtual in case we might override Start in our child functions
     {
         mover = GetComponent<Mover>();
+        noiseMaker = GetComponent<NoiseMaker>();
     }
 
     public virtual void Update() // Use virtual in case we might override Start in our child functions
@@ -27,5 +30,7 @@ public abstract class Pawn : MonoBehaviour
     public abstract void RotateCounterClockwise();
     public abstract void Shoot();
     public abstract void RotateTowards(Vector3 targetPosition);
+    public abstract void MakeNoise();
+    public abstract void StopNoise();
 
 }

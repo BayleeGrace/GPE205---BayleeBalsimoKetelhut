@@ -47,8 +47,13 @@ public class GameManager : MonoBehaviour
         Controller newPlayerController = newPlayerObj.GetComponent<Controller>();
         Pawn newPlayerPawn = newPawnObj.GetComponent<Pawn>();
 
+        newPawnObj.AddComponent<NoiseMaker>();
+        newPlayerPawn.noiseMaker = newPawnObj.GetComponent<NoiseMaker>();
+        newPlayerPawn.noiseMakerVolume = 3;
+
         // Hook them up!
         newPlayerController.pawn = newPlayerPawn;
+
     }
 
 }

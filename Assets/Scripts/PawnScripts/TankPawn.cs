@@ -14,13 +14,28 @@ public class TankPawn : Pawn
     public float damageDone;
     // Variable for how long our bullets survive if they don't collide
     public float lifespan;
+    // Variabe to track when the next event will happen
+    private float nextEventTime;
+    private float timerDelay;
     
     // Start is called before the first frame update
     // Since we inherit from Pawn, we can remove Start and Update fx's. To be safe I will be telling it to run from the parent anyways.
     public override void Start()
     {
         base.Start();
-        shooter = GetComponent<Shooter>();
+        
+        float secondsPerShot;
+        if (fireRate <= 0)
+        {
+            secondsPerShot = Mathf.Infinity;
+        }
+        else
+        {
+            secondsPerShot = 1 / fireRate;
+        }
+        timerDelay = secondsPerShot;
+        nextEventTime = Time.time + timerDelay;
+
     }
 
     // Update is called once per frame
@@ -51,7 +66,11 @@ public class TankPawn : Pawn
 
     public override void Shoot()
     {
+        if (Time.time >= nextEventTime)
+        {
         shooter.Shoot(tankShellPrefab, fireForce, damageDone, lifespan);
+        nextEventTime = Time.time + timerDelay;
+        }
     }
 
     public override void RotateTowards(Vector3 targetPosition)
@@ -62,6 +81,22 @@ public class TankPawn : Pawn
         Quaternion targetRotation = Quaternion.LookRotation(vectorToTarget, Vector3.up);
         // Rotate closer to that vector, but not more than turn speed allows in a single frame
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+    }
+
+    public override void MakeNoise()
+    {
+        if(noiseMaker != null)
+        {
+            noiseMaker.volumeDistance = noiseMakerVolume;
+        }
+    }
+
+    public override void StopNoise()
+    {
+        if(noiseMaker != null)
+        {
+            noiseMaker.volumeDistance = 0;
+        }
     }
 
 }
