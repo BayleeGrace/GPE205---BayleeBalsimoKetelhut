@@ -38,7 +38,7 @@ public class TankerAIController : AIController
                 DoPatrolState();
                 currentState = AIState.Patrol;
                 // Check for transitions
-                if(IsCanSee(target) && IsCanHear(target))
+                if(IsCanSee(target) || IsCanHear(target))
                 {
                     ChangeState(AIState.Chase);
                 }
@@ -47,7 +47,7 @@ public class TankerAIController : AIController
             case AIState.Chase:
                 DoChaseState();
                 currentState = AIState.Chase;
-                if(IsDistanceLessThan(target, 7))
+                if(IsDistanceLessThan(target, 7) || !IsCanSee(target))
                 {
                     ChangeState(AIState.Attack);
                 }
