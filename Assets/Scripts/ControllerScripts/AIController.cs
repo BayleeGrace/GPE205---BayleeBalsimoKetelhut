@@ -66,6 +66,16 @@ public abstract class AIController : Controller
                 }
                 break;
 
+            case AIState.Chase:
+                DoPatrolState();
+                currentState = AIState.Chase;
+                // Check for transitions
+                if (IsInLineOfSight(target) && IsCanSee(target) && IsDistanceLessThan(target, 7))
+                {
+                    ChangeState(AIState.Attack);
+                }
+                break;
+
             case AIState.Attack:
                 DoAttackState();
                 if(!IsInLineOfSight(target))
@@ -153,7 +163,11 @@ public abstract class AIController : Controller
 
     public virtual void DoChaseState()
     {
-        
+        // Seek our target
+        if (target != null)
+        {
+        Seek(target);
+        }
     }
 
     // Attack State

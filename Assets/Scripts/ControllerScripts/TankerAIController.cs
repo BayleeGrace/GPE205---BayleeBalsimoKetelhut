@@ -47,13 +47,17 @@ public class TankerAIController : AIController
             case AIState.Chase:
                 DoChaseState();
                 currentState = AIState.Chase;
-                if(IsDistanceLessThan(target, 7) || !IsCanSee(target))
+                if(IsDistanceLessThan(target, 7))
                 {
                     ChangeState(AIState.Attack);
                 }
                 if (health.currentHealth <= healthToEnrage)
                 {
                     ChangeState(AIState.Enraged);
+                }
+                if(!IsDistanceLessThan(target, 12) || target == null)
+                {
+                    ChangeState(AIState.Patrol);
                 }
                 break;
 
