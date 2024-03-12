@@ -5,7 +5,6 @@ using UnityEngine;
 [System.Serializable]
 public class PlayerController : Controller
 {
-
     public KeyCode moveForwardKey;
     public KeyCode moveBackwardKey;
     public KeyCode rotateClockwiseKey;

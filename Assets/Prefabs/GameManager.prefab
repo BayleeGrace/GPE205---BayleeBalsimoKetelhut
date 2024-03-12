@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3165686245600507824
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3165686245600507830}
+  - component: {fileID: 3165686245600507831}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3165686245600507830
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3165686245600507824}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.20773315, y: 6.9557953, z: -1.1638794}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3165686245600507831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3165686245600507824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7781f503b650e451b88d344cb9f1a185, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerControllerPrefab: {fileID: 1934622400197168709, guid: 1f4f406e9423549c9b0511e7cd9fda01, type: 3}
+  tankPawnPrefab: {fileID: 3453907330998941506, guid: 15ef9dfc83f9144c5b6c35c5026053a9, type: 3}
+  playerSpawnTransform: {fileID: 0}
+  enemyControllerPrefabs:
+  - {fileID: 6161506080211740701, guid: 5accf067ce9a54658b29e5e94070ab1d, type: 3}
+  - {fileID: 200495011483061291, guid: 366b6e834fb6a480e954e398beffee32, type: 3}
+  - {fileID: 200495011483061291, guid: 1bfede70567798c4e9a230a24696d5de, type: 3}
+  - {fileID: 3017913868195013764, guid: 98a2aff48f7164640ae403f9c62fe399, type: 3}
+  - {fileID: 5385180396080336186, guid: 4a5bb4414592b412aa4c160ef4277d91, type: 3}
+  enemyPawnPrefab: {fileID: 3453907330998941506, guid: a4aad75098155483daa675f174144f1d, type: 3}
+  enemySpawnPoints: []
+  enemySpawnPoint: []
+  players: []
+  enemies: []

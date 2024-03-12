@@ -26,47 +26,17 @@ public class TankerAIController : AIController
         base.ProcessInputs();
         switch(currentState) // Switch changes states
         {
-            case AIState.Idle:
-                // Do work for the Idle state
-                DoIdleState();
-                currentState = AIState.Idle;
-                //Check for any transitions
-                break;
-                // break; is important because it will only execute the "Idle" state before executing the other states.
-
-            case AIState.Patrol:
-                DoPatrolState();
-                currentState = AIState.Patrol;
-                // Check for transitions
-                if(IsCanSee(target) || IsCanHear(target))
-                {
-                    ChangeState(AIState.Chase);
-                }
-                break;
-
-            case AIState.Chase:
-                DoChaseState();
-                currentState = AIState.Chase;
-                if(IsDistanceLessThan(target, 7))
-                {
-                    ChangeState(AIState.Attack);
-                }
-                if (health.currentHealth <= healthToEnrage)
-                {
-                    ChangeState(AIState.Enraged);
-                }
-                if(!IsDistanceLessThan(target, 12) || target == null)
-                {
-                    ChangeState(AIState.Patrol);
-                }
-                break;
-
-            case AIState.Attack:
+                
+                case AIState.Attack:
                 DoAttackState();
                 currentState = AIState.Attack;
                 if (health.currentHealth <= healthToEnrage)
                 {
                     ChangeState(AIState.Enraged);
+                }
+                if(!IsCanHear(target) || !IsDistanceLessThan(target, 12))
+                {
+                    ChangeState(AIState.Patrol);
                 }
                 break;
 

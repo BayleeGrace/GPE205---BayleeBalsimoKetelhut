@@ -26,14 +26,20 @@ public abstract class AIController : Controller
 
     public GameObject lastHit;
     public Vector3 collision = Vector3.zero;
-
     
     public override void Start()
     {
+        if(GameManager.instance != null)
+        {
+            // Register this enemy with the List in the Game Manager
+            GameManager.instance.enemies.Add(this);
+        }
+        
         TargetPlayerOne();
         currentState = AIState.Patrol;
         ChangeState(AIState.Patrol);
         base.Start();
+
     }
 
     public override void Update()
@@ -60,14 +66,14 @@ public abstract class AIController : Controller
                 DoPatrolState();
                 currentState = AIState.Patrol;
                 // Check for transitions
-                if (IsInLineOfSight(target) && IsCanSee(target))
+                if (IsDistanceLessThan(target, hearingDistance) || IsCanSee(target) || IsCanHear(target))
                 {
-                    ChangeState(AIState.Attack);
+                    ChangeState(AIState.Chase);
                 }
                 break;
 
             case AIState.Chase:
-                DoPatrolState();
+                DoChaseState();
                 currentState = AIState.Chase;
                 // Check for transitions
                 if (IsInLineOfSight(target) && IsCanSee(target) && IsDistanceLessThan(target, 7))
@@ -79,6 +85,10 @@ public abstract class AIController : Controller
             case AIState.Attack:
                 DoAttackState();
                 if(!IsInLineOfSight(target))
+                {
+                    ChangeState(AIState.Chase);
+                }
+                if(!IsDistanceLessThan(target, hearingDistance))
                 {
                     ChangeState(AIState.Patrol);
                 }
@@ -288,7 +298,7 @@ public abstract class AIController : Controller
 
     public void CheckRaycast()
     {
-        var ray= new Ray(pawn.transform.position, pawn.transform.forward);
+        var ray = new Ray(pawn.transform.position, pawn.transform.forward);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 100))
         {
@@ -313,5 +323,14 @@ public abstract class AIController : Controller
         //{
             //Debug.Log(hit.collider.gameObject.name + " was hit!")
         //}
+    }
+
+    public void OnDestroy()
+    {
+        if (GameManager.instance.enemies != null)
+        {
+            // Deregister with the Game Manager
+            GameManager.instance.enemies.Remove(this);
+        }
     }
 }

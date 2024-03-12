@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealthPickup : Pickup
+public class IncreasedDamagePickup : Pickup
 {
-    public HealthPowerup powerup;
-    
+    public IncreasedDamagePowerup powerup;
+
+    // Start is called before the first frame update
     public override void OnTriggerEnter(Collider other)
     {
         // store other colliding object's powerupManager
@@ -20,5 +21,4 @@ public class HealthPickup : Pickup
             Destroy(gameObject);
         }
     }
-
 }
