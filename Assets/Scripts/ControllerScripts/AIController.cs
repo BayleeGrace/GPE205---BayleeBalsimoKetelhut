@@ -36,8 +36,8 @@ public abstract class AIController : Controller
         }
         
         TargetPlayerOne();
-        currentState = AIState.Patrol;
-        ChangeState(AIState.Patrol);
+        currentState = AIState.Idle;
+        ChangeState(AIState.Idle);
         base.Start();
 
     }
@@ -58,6 +58,10 @@ public abstract class AIController : Controller
                 // Do work for the Idle state
                 DoIdleState();
                 currentState = AIState.Idle;
+                if (IsCanHear(target))
+                {
+                    ChangeState(AIState.Chase);
+                }
                 //Check for any transitions
                 break;
                 // break; is important because it will only execute the "Idle" state before executing the other states.

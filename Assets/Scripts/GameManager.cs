@@ -8,14 +8,13 @@ public class GameManager : MonoBehaviour
     public GameObject playerControllerPrefab;
     public GameObject tankPawnPrefab;
     // Variable to hold the player spawn location
-    public Transform playerSpawnTransform;
+    public GameObject playerSpawnTransform;
 
     // Variable to reference the AI controllers and their pawns
     public GameObject[] enemyControllerPrefabs;
-    public GameObject enemyPawnPrefab;
+    //public GameObject enemyPawnPrefab;
     // Variable to hold enemy spawn locations
-    public GameObject[] enemySpawnPoints;
-    public GameObject[] spawnPoints;
+    public PawnSpawnPoint[] spawnPoints;
 
     // Variable to reference the Map Generator
     public MapGenerator mapGenerator;
@@ -51,14 +50,25 @@ public class GameManager : MonoBehaviour
     
     private void Start()
     {
-        SpawnPlayer();
+
+        foreach (var spawnPoints in spawnPoints)
+        {
+            if (spawnPoints.isPlayerSpawn==true)
+            {
+                SpawnPlayer();
+            }
+            else if (spawnPoints.isPlayerSpawn==false)
+            {
+                SpawnEnemy();
+            }
+        }
     }
 
     // Spawn the Player Controller at x, y, x, with no rotation
     public void SpawnPlayer()
     {
         GameObject newPlayerObj = Instantiate(playerControllerPrefab, Vector3.zero, Quaternion.identity) as GameObject; // Quaternion.identity has something to do with the rotation
-        GameObject newPawnObj = Instantiate(tankPawnPrefab, RandomSpawnPoint().transform.position, Quaternion.identity) as GameObject;
+        GameObject newPawnObj = Instantiate(tankPawnPrefab, playerSpawnTransform.transform.position, Quaternion.identity) as GameObject;
         
         // Get the Player Controller component and the Pawn component
         Controller newPlayerController = newPlayerObj.GetComponent<Controller>();
@@ -75,16 +85,13 @@ public class GameManager : MonoBehaviour
 
     public void SpawnEnemy()
     {
-        
         //GameObject newEnemyObj = Instantiate(enemyControllerPrefabs);
-        foreach (var spawnPoints in spawnPoints)
-        {
-        GameObject newEnemyObj = Instantiate(RandomEnemyPrefab(), Vector3.zero, Quaternion.identity) as GameObject;
-        GameObject newEnemyPawnObj = Instantiate(enemyPawnPrefab, RandomSpawnPoint().transform.position, Quaternion.identity) as GameObject;
+                GameObject newEnemyObj = Instantiate(RandomEnemyPrefab(), Vector3.zero, Quaternion.identity) as GameObject;
+                //GameObject newEnemyPawnObj = Instantiate(enemyPawnPrefab, RandomSpawnPoint().transform.position, Quaternion.identity) as GameObject;
 
-        Controller newEnemyController = newEnemyObj.GetComponent<AIController>();
-        Pawn newEnemyPawn = newEnemyPawnObj.GetComponent<Pawn>();
-        }
+                Controller newEnemyController = newEnemyObj.GetComponent<AIController>();
+                Pawn newEnemyPawn = newEnemyObj.GetComponent<Pawn>();
+        
     }
 
     public GameObject RandomEnemyPrefab()
@@ -92,10 +99,5 @@ public class GameManager : MonoBehaviour
         // pull random enemy controllers
         return enemyControllerPrefabs[Random.Range(0, enemyControllerPrefabs.Length)];
     }
-
-    public GameObject RandomSpawnPoint()
-    {
-        return spawnPoints[Random.Range(0, spawnPoints.Length)];
-    }
-
+    
 }

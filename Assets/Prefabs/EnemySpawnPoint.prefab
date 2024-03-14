@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8365758804061388520}
-  - component: {fileID: 1141194262928143585}
+  - component: {fileID: -4985825558825281252}
   m_Layer: 0
   m_Name: EnemySpawnPoint
   m_TagString: Untagged
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1141194262928143585
+--- !u!114 &-4985825558825281252
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43,3 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69fe45cc4d9ee41329c67191b74b2fed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isPlayerSpawn: 0
+  mapGenerator: {fileID: 2808807456185090722, guid: 555c5d657d9a84f31ba0b2858ac4d3ca, type: 3}
+  owner: {fileID: 0}

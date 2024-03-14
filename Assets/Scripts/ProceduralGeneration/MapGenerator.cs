@@ -13,12 +13,8 @@ public class MapGenerator : MonoBehaviour
     public float roomWidth = 50.0f;
     public float roomHeight = 50.0f;
     private Room[,] mapGrid;
-    #endregion Variables
 
-    //public void Start()
-    //{
-        //GenerateMap(); // Move to GameManager-Awake() when finished testing
-    //}
+    #endregion Variables
     
     public void GenerateMap()
     {
@@ -100,4 +96,5 @@ public class MapGenerator : MonoBehaviour
         // pull random room objects
         return gridPrefab[Random.Range(0, gridPrefab.Length)];
     }
+
 }
