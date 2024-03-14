@@ -90,11 +90,6 @@ public class GameManager : MonoBehaviour
         // Hook them up!
         newPlayerController.pawn = newPlayerPawn;
 
-        if (newPlayerPawn == null)
-        {
-            SpawnPlayer();
-        }
-
     }
 
     public void SpawnEnemy()
@@ -105,11 +100,6 @@ public class GameManager : MonoBehaviour
         Pawn newEnemyPawn = newEnemyObj.GetComponent<Pawn>();
         
         enemies.Add(newEnemyController);
-
-        if (newEnemyController == null)
-        {
-            SpawnEnemy();
-        }
     }
 
     public GameObject RandomEnemyPrefab()

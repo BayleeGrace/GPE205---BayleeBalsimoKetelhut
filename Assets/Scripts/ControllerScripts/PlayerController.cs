@@ -30,7 +30,6 @@ public class PlayerController : Controller
     public override void Update()
     {
         // Process your keyboard inputs
-        // Where does the ProcessInputs() fx come from?
         ProcessInputs();
 
         // Run the Update() fx from the parent class

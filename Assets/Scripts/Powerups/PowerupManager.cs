@@ -60,6 +60,7 @@ public class PowerupManager : MonoBehaviour
         foreach (Powerup powerup in removedPowerupQueue)
         {
             powerups.Remove(powerup);
+            Debug.Log("Powerup " + powerup + " removed.");
         }
         removedPowerupQueue.Clear();
     }

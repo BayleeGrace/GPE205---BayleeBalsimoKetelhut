@@ -110,5 +110,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerup:
     duration: 5
-    isPermanentPowerup: 1
-    damageMultiplier: 50
+    isPermanentPowerup: 0
+    damageMultiplier: 2
