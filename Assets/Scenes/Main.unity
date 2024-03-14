@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44155464, g: 0.490422, b: 0.57043135, a: 1}
+  m_IndirectSpecularColor: {r: 0.4415548, g: 0.49042267, b: 0.57043207, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -465,5 +465,9 @@ PrefabInstance:
       propertyPath: spawnPoints.Array.data[0]
       value: 
       objectReference: {fileID: 1791505161}
+    - target: {fileID: 3165686245600507831, guid: b943ebbc744d94e188eb9f2e1a4ee76a, type: 3}
+      propertyPath: enemyControllerPrefabs.Array.size
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b943ebbc744d94e188eb9f2e1a4ee76a, type: 3}
