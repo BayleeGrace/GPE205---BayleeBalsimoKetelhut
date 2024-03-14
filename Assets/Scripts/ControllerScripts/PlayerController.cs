@@ -14,7 +14,7 @@ public class PlayerController : Controller
     public KeyCode shootKey;
 
     // Start is called before the first frame update
-    public override void Start()
+    public void Awake()
     {
         // Check if we have a Game Manager // If the instance doesn't exist yet...
         if(GameManager.instance != null)

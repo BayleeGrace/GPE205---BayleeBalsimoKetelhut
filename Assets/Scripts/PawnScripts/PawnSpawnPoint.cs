@@ -5,6 +5,5 @@ using UnityEngine;
 public class PawnSpawnPoint : MonoBehaviour
 {
     public bool isPlayerSpawn;
-
     
 }

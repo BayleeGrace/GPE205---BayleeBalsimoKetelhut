@@ -14,7 +14,8 @@ public class GameManager : MonoBehaviour
     public GameObject[] enemyControllerPrefabs;
     //public GameObject enemyPawnPrefab;
     // Variable to hold enemy spawn locations
-    public PawnSpawnPoint[] spawnPoints;
+    public PawnSpawnPoint currentSpawnPoint;
+    
 
     // Variable to reference the Map Generator
     public MapGenerator mapGenerator;
@@ -50,15 +51,23 @@ public class GameManager : MonoBehaviour
     
     private void Start()
     {
+        // Grab all waypoints in the scene that were generated
+        PawnSpawnPoint[] spawnPoints = FindObjectsOfType<PawnSpawnPoint>();
 
-        foreach (var spawnPoints in spawnPoints)
+        foreach (var spawnPoint in spawnPoints)
         {
-            if (spawnPoints.isPlayerSpawn==true)
+            // set the current spawn point iteration to the current spawn point that the enemy will spawn at
+            currentSpawnPoint = spawnPoint; 
+
+            // if that spawn point is not marked as a player spawn,
+            if (currentSpawnPoint.isPlayerSpawn==true)
             {
+                // spawn the player
                 SpawnPlayer();
             }
-            else if (spawnPoints.isPlayerSpawn==false)
+            else if (currentSpawnPoint.isPlayerSpawn==false)
             {
+                // spawn the enemies at every other spawn point in the array
                 SpawnEnemy();
             }
         }
@@ -81,22 +90,31 @@ public class GameManager : MonoBehaviour
         // Hook them up!
         newPlayerController.pawn = newPlayerPawn;
 
+        if (newPlayerPawn == null)
+        {
+            SpawnPlayer();
+        }
+
     }
 
     public void SpawnEnemy()
     {
-        //GameObject newEnemyObj = Instantiate(enemyControllerPrefabs);
-                GameObject newEnemyObj = Instantiate(RandomEnemyPrefab(), Vector3.zero, Quaternion.identity) as GameObject;
-                //GameObject newEnemyPawnObj = Instantiate(enemyPawnPrefab, RandomSpawnPoint().transform.position, Quaternion.identity) as GameObject;
+        GameObject newEnemyObj = Instantiate(RandomEnemyPrefab(), currentSpawnPoint.transform.position, Quaternion.identity) as GameObject;
 
-                Controller newEnemyController = newEnemyObj.GetComponent<AIController>();
-                Pawn newEnemyPawn = newEnemyObj.GetComponent<Pawn>();
+        AIController newEnemyController = newEnemyObj.GetComponent<AIController>();
+        Pawn newEnemyPawn = newEnemyObj.GetComponent<Pawn>();
         
+        enemies.Add(newEnemyController);
+
+        if (newEnemyController == null)
+        {
+            SpawnEnemy();
+        }
     }
 
     public GameObject RandomEnemyPrefab()
     {
-        // pull random enemy controllers
+        // pull random enemy obj's
         return enemyControllerPrefabs[Random.Range(0, enemyControllerPrefabs.Length)];
     }
     

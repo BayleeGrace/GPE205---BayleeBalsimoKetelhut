@@ -17,12 +17,15 @@ public class TankPawn : Pawn
     // Variabe to track when the next event will happen
     private float nextEventTime;
     private float timerDelay;
+
+    private bool isPlayer;
     
     // Start is called before the first frame update
     // Since we inherit from Pawn, we can remove Start and Update fx's. To be safe I will be telling it to run from the parent anyways.
     public override void Start()
     {
         base.Start();
+
         
         float secondsPerShot;
         if (fireRate <= 0)
