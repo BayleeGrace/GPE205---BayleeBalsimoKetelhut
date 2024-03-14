@@ -19,7 +19,7 @@ public class IncreasedDamagePowerup : Powerup
 
             // reference the "DamageOnHit" component and increase damage done base on the nultiplier
             newDamage = newDamage * damageMultiplier;
-            Debug.Log("Damage is now " + newDamage);
+            Debug.Log("Damage for " + target + "is now " + newDamage);
         }
     }
 
@@ -34,7 +34,7 @@ public class IncreasedDamagePowerup : Powerup
 
             // reference the "DamageOnHit" component and increase damage done base on the nultiplier
             newDamage = newDamage * 1;
-            Debug.Log("Damage is now " + newDamage);
+            Debug.Log("Damage for " + target + "is now " + newDamage);
         }
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    #region Variables;
     // Variable to reference the player controller and the tank pawn
     public GameObject playerControllerPrefab;
     public GameObject tankPawnPrefab;
@@ -13,24 +14,19 @@ public class GameManager : MonoBehaviour
     // Variable to reference the AI controllers and their pawns
     public GameObject[] enemyControllerPrefabs;
     //public GameObject enemyPawnPrefab;
-    // Variable to hold enemy spawn locations
-    public PawnSpawnPoint currentSpawnPoint;
+    public PawnSpawnPoint currentSpawnPoint; // Variable to hold the current spawn location
     
+    public MapGenerator mapGenerator; // Variable to reference the Map Generator
 
-    // Variable to reference the Map Generator
-    public MapGenerator mapGenerator;
+    public static GameManager instance; // Variable to reference the GameManager
 
-    // Variable to reference the GameManager
-    public static GameManager instance;
-
-    // Creates a LIST of players, even if the game is going to be single player
-    public List<PlayerController> players;
+    public List<PlayerController> players; // Creates a LIST of players, even if the game is going to be single player
     public List<AIController> enemies;
+    #endregion Variables;
     
-    // Create a game object that holds this game manager
     private void Awake()
     {
-        
+        // Create a game object that holds this game manager
         if (instance == null)
         {
             instance = this;
@@ -46,7 +42,6 @@ public class GameManager : MonoBehaviour
         {
             mapGenerator.GenerateMap();
         }
-
     }
     
     private void Start()

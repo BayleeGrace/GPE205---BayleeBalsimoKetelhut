@@ -4,9 +4,9 @@ using UnityEngine;
 
 public abstract class AIController : Controller
 {
+    #region Variables;
     // An enum is less taxing on the system like an int, but gives the string to other programmers to understand.
     // Each str is being stored as a numeric value (Guard = 1, Chase = 2, etc.)
-
     public enum AIState { Idle, Chase, Patrol, Attack, Flee, Hide, Enraged };
 
     // State variables
@@ -15,20 +15,23 @@ public abstract class AIController : Controller
     public GameObject target; // Stores the target that the AIController will be seeking
 
     // Patrol variables
-    public Transform [] patrolWaypoints;
+    public PatrolWaypoint[] patrolWaypoints;
     public float waypointStopDistance;
     private int currentWaypoint = 0;
 
-    public float hearingDistance;
+    public float hearingDistance; // Variable to hold hearing
 
-    public float fieldOfView;
-    public float maxViewDistance;
+    public float fieldOfView; // Variable to hold the AI's field of view value
+    public float maxViewDistance; // Variable to determine how far the enemy can see
 
-    public GameObject lastHit;
-    public Vector3 collision = Vector3.zero;
+    public GameObject lastHit; // Tracks what the AI is seeing in-game
+    public Vector3 collision = Vector3.zero; // ???
+    #endregion Variables;
     
     public override void Start()
     {
+        patrolWaypoints = FindObjectsOfType<PatrolWaypoint>();
+        
         if(GameManager.instance != null)
         {
             // Register this enemy with the List in the Game Manager
@@ -45,32 +48,32 @@ public abstract class AIController : Controller
     public override void Update()
     {
         ProcessInputs();
-        CheckRaycast();
+        CheckRaycast(); // Tracks what the AI is "seeing" at all times
         base.Update();
     }
 
     public override void ProcessInputs() // this is overriding the Controller "ProcessInputs()"
     {
         
-        switch(currentState) // Switch changes states
+        #region State Transitions;
+        switch(currentState) // Switch changes the enum based on the current state given
         {
             case AIState.Idle:
                 // Do work for the Idle state
                 DoIdleState();
                 currentState = AIState.Idle;
-                if (IsCanHear(target))
+                if (IsCanHear(target) || IsCanSee(target))
                 {
                     ChangeState(AIState.Chase);
                 }
                 //Check for any transitions
-                break;
-                // break; is important because it will only execute the "Idle" state before executing the other states.
+                break; // break; is important because it will only execute the "Idle" state before executing the other states.
 
             case AIState.Patrol:
                 DoPatrolState();
                 currentState = AIState.Patrol;
                 // Check for transitions
-                if (IsDistanceLessThan(target, hearingDistance) || IsCanSee(target) || IsCanHear(target))
+                if (IsCanSee(target) || IsCanHear(target))
                 {
                     ChangeState(AIState.Chase);
                 }
@@ -80,7 +83,7 @@ public abstract class AIController : Controller
                 DoChaseState();
                 currentState = AIState.Chase;
                 // Check for transitions
-                if (IsInLineOfSight(target) && IsCanSee(target) && IsDistanceLessThan(target, 7))
+                if (IsInLineOfSight(target) && IsCanSee(target) && IsDistanceLessThan(target, hearingDistance))
                 {
                     ChangeState(AIState.Attack);
                 }
@@ -88,6 +91,7 @@ public abstract class AIController : Controller
 
             case AIState.Attack:
                 DoAttackState();
+                // Check for transitions
                 if(!IsInLineOfSight(target))
                 {
                     ChangeState(AIState.Chase);
@@ -97,17 +101,30 @@ public abstract class AIController : Controller
                     ChangeState(AIState.Patrol);
                 }
                 break;
-
         }
+        #endregion State Transitions;
 
     }
 
-    // Idle State
+    /// <summary> ChangeState()
+    /// Changes the current state based on what the new state that is given
+    /// </summary>
+    public virtual void ChangeState(AIState newState)
+    {
+        currentState = newState;
+        lastStateChangeTime = Time.time; // Tracks how long it takes to change states when ChangeState is called
+    }
+
+    #region Idle functions;
 
     public void DoIdleState() // This is a function that runs the IDLE state, not the action of being idle
     {
         
     }
+
+    #endregion Idle functions;
+    
+    #region Seek functions;
     
     public void Seek(GameObject target)
     {
@@ -128,37 +145,50 @@ public abstract class AIController : Controller
 
     public void Seek(Transform targetTransform)
     {
-        // Seek the position of our target transform
-        Seek(targetTransform.gameObject);
+        if (targetTransform != null)
+        {
+            // Seek the position of our target transform
+            Seek(targetTransform.gameObject);
+        }
     }
 
     public void Seek(Vector3 targetPosition)
     {
-        // RotateTowards the Funciton
-        pawn.RotateTowards(targetPosition);
-        // Move Forward
-        pawn.MoveForward();
+        if (targetPosition != null)
+        {
+            // RotateTowards the Funciton
+            pawn.RotateTowards(targetPosition);
+            // Move Forward
+            pawn.MoveForward();
+        }
     }
+    #endregion Seek functions;
 
-    // Patrol State
+    #region Patrol functions;
 
     public virtual void DoPatrolState()
     {
-        if(IsHasTarget())
+        
+        PatrolWaypoint currentWaypoint = 
+        
+        if(!IsHasTarget())
         {
+            if (patrolWaypoints != null)
+            {
             // If there are still waypoints we can travel to
-            if (patrolWaypoints.Length > currentWaypoint)
-            {
-                // Then seek that waypoint
-                Seek(patrolWaypoints[currentWaypoint]);
-                if (Vector3.Distance(pawn.transform.position, patrolWaypoints[currentWaypoint].position) <= waypointStopDistance)
+                if (patrolWaypoints.Length > currentWaypoint)
                 {
-                    currentWaypoint++;
+                    // Then seek that waypoint
+                    Seek(patrolWaypoints[currentWaypoint]);
+                    if (Vector3.Distance(pawn.transform.position, patrolWaypoints[currentWaypoint].position) <= waypointStopDistance)
+                    {
+                        currentWaypoint++;
+                    }
                 }
-            }
-            else
-            {
-                RestartPatrol();
+                else
+                {
+                    RestartPatrol();
+                }
             }
         }
         else
@@ -173,7 +203,9 @@ public abstract class AIController : Controller
         currentWaypoint = 0;
     }
 
-    // Chase State
+    #endregion Patrol functions;
+
+    #region Chase functions;
 
     public virtual void DoChaseState()
     {
@@ -184,76 +216,49 @@ public abstract class AIController : Controller
         }
     }
 
-    // Attack State
+    #endregion Chase functions;
+
+    #region Attack functions;
 
     public virtual void DoAttackState()
     {
         Debug.Log(pawn.name + "Is Attacking...");
     }
+    
+    #endregion Attack functions;
 
-    // Flee State
+    #region Flee functions;
 
     public virtual void DoFleeState()
     {
 
     }
 
-    // Hide State
+    #endregion Flee functions;
+
+    #region Hide functions;
 
     public virtual void DoHideState()
     {
 
     }
 
-    // Enraged
+    #endregion Hide functions;
+
+    #region Enraged functions;
 
     public virtual void DoEnragedState()
     {
 
     }
 
-    // Compare distance between this object and target game object
+    #endregion Enraged functions;
 
-    protected bool IsDistanceLessThan(GameObject target, float distance)
-    {
-        // Compare transform distance of two pawns, the owner of this component and target pawn
-        if (Vector3.Distance(pawn.transform.position, target.transform.position) < distance)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    public virtual void ChangeState(AIState newState)
-    {
-        currentState = newState;
-        lastStateChangeTime = Time.time; // Tracks how long it takes to change states when ChangeState is called
-    }
-
-    public void TargetPlayerOne()
-    {
-        // If the GameManager exists
-        if(GameManager.instance != null)
-        {
-            // And there are existing players
-            if(GameManager.instance.players.Count > 0)
-            {
-                //then target the first player controller in the Game instance
-                target = GameManager.instance.players[0].pawn.gameObject;
-            }
-        }
-    }
-
-    protected bool IsHasTarget()
-    {
-        // return true, we have target
-        return (target != null);
-        // false, we dont have a target
-    }
-
+    #region AI senses;
+    
+    /// <summary> IsCanHear()
+    /// Grabs the target's NoiseMaker (if it exists) and returns if the target is being heard
+    /// </summary>
     public bool IsCanHear(GameObject target)
     {
         // Get the target's NoiseMaker
@@ -283,6 +288,9 @@ public abstract class AIController : Controller
         }
     }
 
+    /// <summary> IsCanSee()
+    /// Grabs the target's position, finds the vector between this object's position and the target, and checks if that angle difference is within the FOV
+    /// </summary>
     public bool IsCanSee(GameObject target)
     {
         // Find the vector from the agent to the target
@@ -300,6 +308,9 @@ public abstract class AIController : Controller
         }
     }
 
+    /// <summary> CheckRaycast()
+    /// Creates a Raycast at the AI's and checks what it is colliding with
+    /// </summary>
     public void CheckRaycast()
     {
         var ray = new Ray(pawn.transform.position, pawn.transform.forward);
@@ -311,6 +322,9 @@ public abstract class AIController : Controller
         }
     }
 
+    /// <summary> IsInLineOfSight()
+    /// Determines if the TARGET is in the exact line of sight of the enemy AI
+    /// </summary>
     public bool IsInLineOfSight(GameObject target)
     {
         if (target == lastHit)
@@ -321,14 +335,60 @@ public abstract class AIController : Controller
             return false;
         }
         
-        //Ray agentRay = new Ray(transform.position, transform.forward);
-        //Debug.DrawRay(agentRay.origin, agentRay.direction * 10);
-        //if (Physics.Raycast(ray, out RaycastHit hitData))
-        //{
+        /*Ray agentRay = new Ray(transform.position, transform.forward);
+        Debug.DrawRay(agentRay.origin, agentRay.direction * 10);
+        if (Physics.Raycast(ray, out RaycastHit hitData))
+        {
             //Debug.Log(hit.collider.gameObject.name + " was hit!")
-        //}
+        }*/
     }
 
+    #endregion AI senses;
+
+    /// <summary> IsDistanceLessThan()
+    /// Compare distance between this object's position and target game object's position
+    /// </summary>
+    protected bool IsDistanceLessThan(GameObject target, float distance)
+    {
+        // Compare transform distance of two pawns, the owner of this component and target pawn
+        if (Vector3.Distance(pawn.transform.position, target.transform.position) < distance)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /// <summary> TargetPlayerOne()
+    /// Take the first player in the list of "players" within the Game Manager, and Target that player (if that player exists)
+    /// </summary>
+    public void TargetPlayerOne()
+    {
+        // If the GameManager exists
+        if(GameManager.instance != null)
+        {
+            // And there are existing players
+            if(GameManager.instance.players.Count > 0)
+            {
+                //then target the first player controller in the Game instance
+                target = GameManager.instance.players[0].pawn.gameObject;
+            }
+        }
+    }
+
+    /// <summary> IsHasTarget()
+    /// Tracks if the AI's target exists
+    /// </summary>
+    protected bool IsHasTarget()
+    {
+        // return true, we have target
+        return (target != null);
+        // false, we dont have a target
+    }
+    
+    // Removes this object from the enemies array in the Game Manager
     public void OnDestroy()
     {
         if (GameManager.instance.enemies != null)

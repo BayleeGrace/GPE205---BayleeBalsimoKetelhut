@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class TankerAIController : AIController
 {
-    private Health health;
+
+    #region Variables;
+    private Health health; // Tracks this AI's health to trigger the enraged state
     public float healthToEnrage;
-    public float enragedMoveSpeed;
-    public float enragedFireRate;
+    public float enragedMoveSpeed; // Move speed multiplier when enraged
+    public float enragedFireRate; // Fire rate multiplier when enraged
+    #endregion Variables;
     
     public override void Start()
     {
@@ -15,7 +18,6 @@ public class TankerAIController : AIController
         base.Start();
     }
 
-    // Update is called once per frame
     public override void Update()
     {
         base.Update();
@@ -26,9 +28,8 @@ public class TankerAIController : AIController
         base.ProcessInputs();
         switch(currentState) // Switch changes states
         {
-                
-                case AIState.Attack:
-                DoAttackState();
+                /*case AIState.Attack:
+                base.DoAttackState();
                 currentState = AIState.Attack;
                 if (health.currentHealth <= healthToEnrage)
                 {
@@ -38,7 +39,7 @@ public class TankerAIController : AIController
                 {
                     ChangeState(AIState.Patrol);
                 }
-                break;
+                break;*/
 
             case AIState.Enraged:
                 DoEnragedState();
@@ -48,7 +49,6 @@ public class TankerAIController : AIController
                     ChangeState(AIState.Attack);
                 }
                 break;
-
         }
 
     }
