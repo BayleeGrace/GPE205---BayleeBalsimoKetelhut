@@ -19,10 +19,8 @@ public abstract class AIController : Controller
     public List<Transform> patrolWaypoints;
     public float waypointStopDistance;
     //private int currentWaypoint = 0;
-    private Transform nearestWaypoint;
-    private PatrolWaypoint nextWaypoint;
-    private PatrolWaypoint currentWaypoint;
-    private bool isFirstWaypoint = true;
+    private GameObject nearestWaypoint;
+    private bool firstWaypointWasReached = false;
 
     public float hearingDistance; // Variable to hold hearing
 
@@ -183,73 +181,76 @@ public abstract class AIController : Controller
 
     public virtual void DoPatrolState()
     {
-        if(IsHasTarget())
+        if (IsHasTarget())
         {
-            if (isFirstWaypoint == true)
+            if (patrolWaypoints != null)
             {
                 FindNearestPatrolWaypoint();
-                Patrol(nearestWaypoint);
-            }
-            else if (isFirstWaypoint == false)
-            {
-                FindNextPatrolWaypoint();
-                Patrol(currentWaypoint.transform);
-            }
-            else
-            {
-                RestartPatrol();
-            }
-        }
-        else
-        {
-            TargetPlayerOne();
-        }
-    }
+                if (IsDistanceLessThan(nearestWaypoint, (waypointStopDistance)))
+                {
+                    // Then seek that waypoint
+                    Seek(nearestWaypoint);
+                    if (Vector3.Distance(pawn.transform.position, nearestWaypoint.transform.position) <= waypointStopDistance)
+                    {
+                        firstWaypointWasReached = true;
+                    }
+                }
+                else if ((!IsDistanceLessThan(nearestWaypoint, waypointStopDistance)) || firstWaypointWasReached == true)
+                {
+                    PatrolWaypoint nextWaypoint = nearestWaypoint.GetComponent<PatrolWaypoint>().nextWaypoint;
 
-    public void Patrol(Transform targetWaypoint)
-    {
-        // If there are still waypoints we can travel to
-        if (patrolWaypoints != null)
-        {
-            Seek(targetWaypoint);
-            if (Vector3.Distance(pawn.transform.position, nearestWaypoint.position) <= waypointStopDistance)
-            {
-                isFirstWaypoint = false;
-                FindNextPatrolWaypoint();
+                    Seek(nextWaypoint.gameObject);
+                }
+                else
+                {
+                    RestartPatrol();
+                }
             }
         }
     }
-
-    public void FindNextPatrolWaypoint()
-    {
-        nextWaypoint = nearestWaypoint.gameObject.GetComponent<PatrolWaypoint>().nextWaypoint;
-        currentWaypoint = nextWaypoint.nextWaypoint;
-
-        Seek(currentWaypoint.transform);
-        Debug.Log("Target waypoint is " + currentWaypoint + " waypoint");
-    }
+    
 
     // Create a function to track what PatrolWaypoint is the closest to the current AIController
     public void FindNearestPatrolWaypoint()
     {
-        // Assume the first waypoint in the array is the nearest
-        nearestWaypoint = patrolWaypoints[0];
-
-        float distanceToNearestWaypoint = Vector3.Distance(nearestWaypoint.position, pawn.transform.position);
-
-        // Compare the current waypoint's Vector distance to all other waypoint distances in the list
-        foreach (var patrolWaypoint in patrolWaypoints)
+        if (firstWaypointWasReached == false)
         {
-            if (patrolWaypoint != nearestWaypoint)
+            // Assume the first waypoint in the array is the nearest
+            nearestWaypoint = patrolWaypoints[0].gameObject;
+
+            float distanceToNearestWaypoint = Vector3.Distance(nearestWaypoint.transform.position, pawn.transform.position);
+
+            // Compare the current waypoint's Vector distance to all other waypoint distances in the list
+            foreach (var patrolWaypoint in patrolWaypoints)
             {
-                // Find the distance between the AI and each patrolWaypoint
-                float distanceFromPawnToTarget = Vector3.Distance(patrolWaypoint.position, pawn.transform.position);
-                if (distanceFromPawnToTarget < distanceToNearestWaypoint)
+                if (patrolWaypoint.gameObject != nearestWaypoint)
                 {
-                    distanceFromPawnToTarget = distanceToNearestWaypoint;
-                    nearestWaypoint = patrolWaypoint;
-                    isFirstWaypoint = true;
+                    // Find the distance between the AI and each patrolWaypoint
+                    float distanceToNewWaypoint = Vector3.Distance(patrolWaypoint.position, pawn.transform.position);
+                    if (distanceToNewWaypoint < distanceToNearestWaypoint)
+                    {
+                        distanceToNewWaypoint = distanceToNearestWaypoint;
+                        nearestWaypoint = patrolWaypoint.gameObject;
+                        //Debug.Log("Nearest waypoint for " + pawn + " is " + nearestWaypoint);
+                    }
                 }
+            }
+        }
+        else if (firstWaypointWasReached == true)
+        {
+            float distanceToNearestWaypoint = Vector3.Distance(nearestWaypoint.transform.position, pawn.transform.position);
+
+            foreach (var patrolWaypoint in patrolWaypoints)
+            {
+                GameObject nextWaypoint = nearestWaypoint.GetComponent<PatrolWaypoint>().nextWaypoint.gameObject;
+
+                float distanceToNewWaypoint = Vector3.Distance(nextWaypoint.transform.position, pawn.transform.position);
+                    if (distanceToNewWaypoint < distanceToNearestWaypoint)
+                    {
+                        distanceToNewWaypoint = distanceToNearestWaypoint;
+                        nearestWaypoint = nextWaypoint;
+                        //Debug.Log("Nearest waypoint for " + pawn + " is " + nearestWaypoint);
+                    }
             }
         }
     }
@@ -258,7 +259,7 @@ public abstract class AIController : Controller
     {
         // Reset the current array index back to 0
         //FindNearestPatrolWaypoint();
-        nearestWaypoint = patrolWaypoints[0];
+        //currentWaypoint = patrolWaypoints[0];
     }
 
     #endregion Patrol functions;
