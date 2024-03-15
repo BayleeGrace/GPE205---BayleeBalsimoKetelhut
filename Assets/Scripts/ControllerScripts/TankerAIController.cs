@@ -57,11 +57,11 @@ public class TankerAIController : AIController
     {
         if (target != null)
         {
+            Enrage();
             // Chase
             Seek(target);
             // Shoot
             pawn.Shoot();
-            Enrage();
         }
         else if (target = null)
         {

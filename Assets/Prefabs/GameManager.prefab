@@ -47,13 +47,12 @@ MonoBehaviour:
   tankPawnPrefab: {fileID: 3453907330998941506, guid: 15ef9dfc83f9144c5b6c35c5026053a9, type: 3}
   playerSpawnTransform: {fileID: 0}
   enemyControllerPrefabs:
-  - {fileID: 6161506080211740701, guid: 5accf067ce9a54658b29e5e94070ab1d, type: 3}
+  - {fileID: 5385180396080336186, guid: 4a5bb4414592b412aa4c160ef4277d91, type: 3}
   - {fileID: 200495011483061291, guid: 366b6e834fb6a480e954e398beffee32, type: 3}
+  - {fileID: 6161506080211740701, guid: 5accf067ce9a54658b29e5e94070ab1d, type: 3}
   - {fileID: 200495011483061291, guid: 1bfede70567798c4e9a230a24696d5de, type: 3}
   - {fileID: 3017913868195013764, guid: 98a2aff48f7164640ae403f9c62fe399, type: 3}
-  - {fileID: 5385180396080336186, guid: 4a5bb4414592b412aa4c160ef4277d91, type: 3}
-  enemyPawnPrefab: {fileID: 3453907330998941506, guid: a4aad75098155483daa675f174144f1d, type: 3}
-  enemySpawnPoints: []
-  enemySpawnPoint: []
+  currentSpawnPoint: {fileID: 0}
+  mapGenerator: {fileID: 0}
   players: []
   enemies: []

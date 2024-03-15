@@ -46,11 +46,7 @@ MonoBehaviour:
   pawn: {fileID: 6432117679556548956}
   currentState: 0
   target: {fileID: 0}
-  patrolWaypoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  patrolWaypoints: []
   waypointStopDistance: 2
   hearingDistance: 3
   fieldOfView: 90

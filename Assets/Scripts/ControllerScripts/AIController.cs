@@ -15,9 +15,14 @@ public abstract class AIController : Controller
     public GameObject target; // Stores the target that the AIController will be seeking
 
     // Patrol variables
-    public PatrolWaypoint[] patrolWaypoints;
+    //public Transform[] patrolWaypoints;
+    public List<Transform> patrolWaypoints;
     public float waypointStopDistance;
-    private int currentWaypoint = 0;
+    //private int currentWaypoint = 0;
+    private Transform nearestWaypoint;
+    private PatrolWaypoint nextWaypoint;
+    private PatrolWaypoint currentWaypoint;
+    private bool isFirstWaypoint = true;
 
     public float hearingDistance; // Variable to hold hearing
 
@@ -30,7 +35,11 @@ public abstract class AIController : Controller
     
     public override void Start()
     {
-        patrolWaypoints = FindObjectsOfType<PatrolWaypoint>();
+        PatrolWaypoint[] foundPatrolWaypoints = FindObjectsOfType<PatrolWaypoint>();
+        foreach (var patrolWaypoint in foundPatrolWaypoints)
+        {
+            patrolWaypoints.Add(patrolWaypoint.transform);
+        }
         
         if(GameManager.instance != null)
         {
@@ -39,8 +48,8 @@ public abstract class AIController : Controller
         }
         
         TargetPlayerOne();
-        currentState = AIState.Idle;
-        ChangeState(AIState.Idle);
+        currentState = AIState.Patrol;
+        ChangeState(AIState.Patrol);
         base.Start();
 
     }
@@ -73,7 +82,7 @@ public abstract class AIController : Controller
                 DoPatrolState();
                 currentState = AIState.Patrol;
                 // Check for transitions
-                if (IsCanSee(target) || IsCanHear(target))
+                if ((IsCanSee(target) && IsDistanceLessThan(target, hearingDistance)) || (IsCanHear(target) && IsDistanceLessThan(target, hearingDistance)))
                 {
                     ChangeState(AIState.Chase);
                 }
@@ -83,9 +92,13 @@ public abstract class AIController : Controller
                 DoChaseState();
                 currentState = AIState.Chase;
                 // Check for transitions
-                if (IsInLineOfSight(target) && IsCanSee(target) && IsDistanceLessThan(target, hearingDistance))
+                if (IsInLineOfSight(target) && IsCanSee(target) && IsDistanceLessThan(target, 8/*change to variable after testing*/))
                 {
                     ChangeState(AIState.Attack);
+                }
+                else if (target == null || !IsDistanceLessThan(target, hearingDistance))
+                {
+                    ChangeState(AIState.Patrol);
                 }
                 break;
 
@@ -148,7 +161,9 @@ public abstract class AIController : Controller
         if (targetTransform != null)
         {
             // Seek the position of our target transform
-            Seek(targetTransform.gameObject);
+            pawn.RotateTowards(targetTransform.position);
+            // Move Forward
+            pawn.MoveForward();
         }
     }
 
@@ -168,27 +183,21 @@ public abstract class AIController : Controller
 
     public virtual void DoPatrolState()
     {
-        
-        PatrolWaypoint currentWaypoint = 
-        
-        if(!IsHasTarget())
+        if(IsHasTarget())
         {
-            if (patrolWaypoints != null)
+            if (isFirstWaypoint == true)
             {
-            // If there are still waypoints we can travel to
-                if (patrolWaypoints.Length > currentWaypoint)
-                {
-                    // Then seek that waypoint
-                    Seek(patrolWaypoints[currentWaypoint]);
-                    if (Vector3.Distance(pawn.transform.position, patrolWaypoints[currentWaypoint].position) <= waypointStopDistance)
-                    {
-                        currentWaypoint++;
-                    }
-                }
-                else
-                {
-                    RestartPatrol();
-                }
+                FindNearestPatrolWaypoint();
+                Patrol(nearestWaypoint);
+            }
+            else if (isFirstWaypoint == false)
+            {
+                FindNextPatrolWaypoint();
+                Patrol(currentWaypoint.transform);
+            }
+            else
+            {
+                RestartPatrol();
             }
         }
         else
@@ -197,10 +206,59 @@ public abstract class AIController : Controller
         }
     }
 
+    public void Patrol(Transform targetWaypoint)
+    {
+        // If there are still waypoints we can travel to
+        if (patrolWaypoints != null)
+        {
+            Seek(targetWaypoint);
+            if (Vector3.Distance(pawn.transform.position, nearestWaypoint.position) <= waypointStopDistance)
+            {
+                isFirstWaypoint = false;
+                FindNextPatrolWaypoint();
+            }
+        }
+    }
+
+    public void FindNextPatrolWaypoint()
+    {
+        nextWaypoint = nearestWaypoint.gameObject.GetComponent<PatrolWaypoint>().nextWaypoint;
+        currentWaypoint = nextWaypoint.nextWaypoint;
+
+        Seek(currentWaypoint.transform);
+        Debug.Log("Target waypoint is " + currentWaypoint + " waypoint");
+    }
+
+    // Create a function to track what PatrolWaypoint is the closest to the current AIController
+    public void FindNearestPatrolWaypoint()
+    {
+        // Assume the first waypoint in the array is the nearest
+        nearestWaypoint = patrolWaypoints[0];
+
+        float distanceToNearestWaypoint = Vector3.Distance(nearestWaypoint.position, pawn.transform.position);
+
+        // Compare the current waypoint's Vector distance to all other waypoint distances in the list
+        foreach (var patrolWaypoint in patrolWaypoints)
+        {
+            if (patrolWaypoint != nearestWaypoint)
+            {
+                // Find the distance between the AI and each patrolWaypoint
+                float distanceFromPawnToTarget = Vector3.Distance(patrolWaypoint.position, pawn.transform.position);
+                if (distanceFromPawnToTarget < distanceToNearestWaypoint)
+                {
+                    distanceFromPawnToTarget = distanceToNearestWaypoint;
+                    nearestWaypoint = patrolWaypoint;
+                    isFirstWaypoint = true;
+                }
+            }
+        }
+    }
+
     protected void RestartPatrol()
     {
         // Reset the current array index back to 0
-        currentWaypoint = 0;
+        //FindNearestPatrolWaypoint();
+        nearestWaypoint = patrolWaypoints[0];
     }
 
     #endregion Patrol functions;

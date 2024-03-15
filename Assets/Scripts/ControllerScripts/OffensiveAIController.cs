@@ -9,13 +9,11 @@ public class OffensiveAIController : AIController
     public float distanceUntilChase;
     public float distanceUntilAttack;
     
-    // Start is called before the first frame update
     public override void Start()
     {
         base.Start();
     }
 
-    // Update is called once per frame
     public override void Update()
     {
         base.Update();
@@ -23,8 +21,8 @@ public class OffensiveAIController : AIController
 
     public override void ProcessInputs() // this is overriding the Controller "ProcessInputs()"
     {
-        
-        switch(currentState) // Switch changes states
+        base.ProcessInputs();
+        /*switch(currentState) // Switch changes states
         {
             case AIState.Idle:
                 // Do work for the Idle state
@@ -79,7 +77,7 @@ public class OffensiveAIController : AIController
                 }
                 break;
 
-        }
+        }*/
 
     }
 
@@ -117,3 +115,4 @@ public class OffensiveAIController : AIController
         }
     }
 }
+
