@@ -15,7 +15,7 @@ public class TankPawn : Pawn
     // Variable for how long our bullets survive if they don't collide
     public float lifespan;
     // Variabe to track when the next event will happen
-    private float nextEventTime;
+    public float nextEventTime;
     private float timerDelay;
 
     private bool isPlayer;
@@ -45,6 +45,7 @@ public class TankPawn : Pawn
     public override void Update()
     {
         base.Update();
+        //CheckFireRate();
     }
 
     public override void MoveForward()

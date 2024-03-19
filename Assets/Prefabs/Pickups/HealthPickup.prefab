@@ -111,4 +111,4 @@ MonoBehaviour:
   powerup:
     duration: 5
     isPermanentPowerup: 1
-    healthToAdd: 20
+    healthToAdd: 40

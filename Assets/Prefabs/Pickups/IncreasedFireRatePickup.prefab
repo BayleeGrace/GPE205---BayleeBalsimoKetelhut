@@ -112,4 +112,4 @@ MonoBehaviour:
   powerup:
     duration: 7
     isPermanentPowerup: 0
-    fireRateMultiplier: 0.1
+    fireRateMultiplier: 10

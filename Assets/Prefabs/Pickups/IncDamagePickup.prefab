@@ -109,6 +109,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   powerup:
-    duration: 5
+    duration: 20
     isPermanentPowerup: 0
     damageMultiplier: 2

@@ -14,7 +14,18 @@ public class MapGenerator : MonoBehaviour
     public float roomHeight = 50.0f;
     private Room[,] mapGrid;
 
+    public List<PawnSpawnPoint> spawnPoints;
+
     #endregion Variables
+    
+    public void Start()
+    {
+        PawnSpawnPoint[] spawnPoint = FindObjectsOfType<PawnSpawnPoint>();
+        foreach (var spawn in spawnPoint)
+        {
+            spawnPoints.Add(spawn);
+        }
+    }
     
     public void GenerateMap()
     {

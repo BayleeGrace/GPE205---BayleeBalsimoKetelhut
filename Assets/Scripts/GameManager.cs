@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     public GameObject tankPawnPrefab; // Variable to store the player's tankPawn
     public GameObject playerSpawnTransform; // Variable to hold the player spawn location
     public bool isPlayerSpawned = false; // Boolean to check if the player was spawned, may need to be changed later to allow for multiplayer
+    public GameObject cameraPrefab;
+    public CameraController cameraControllerPrefab;
     public GameObject[] enemyControllerPrefabs; // Variable to reference the AI controllers and their pawns
     //public GameObject enemyPawnPrefab; **Not used d/t controller being contained within enemy prefab, may need to be used later!**
     public PawnSpawnPoint currentSpawnPoint; // Variable to hold the current spawn location
@@ -60,6 +62,7 @@ public class GameManager : MonoBehaviour
                 {
                     // spawn the player at that random spawn point
                     SpawnPlayer(randomPlayerSpawnPoint);
+                    SpawnPlayerCamera();
                 }
             }
             // if the current spawn point is not a player spawn, then spawn an enemy
@@ -92,6 +95,16 @@ public class GameManager : MonoBehaviour
 
         isPlayerSpawned = true;
 
+    }
+
+    public void SpawnPlayerCamera()
+    {
+        foreach (var player in players)
+        {
+            GameObject newCamera = Instantiate(cameraPrefab, player.pawn.transform.position, Quaternion.identity) as GameObject;
+
+            cameraPrefab = newCamera;
+        }
     }
 
     public void SpawnEnemy()

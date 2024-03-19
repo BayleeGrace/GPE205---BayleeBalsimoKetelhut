@@ -19,7 +19,7 @@ public abstract class AIController : Controller
     public List<Transform> patrolWaypoints;
     public float waypointStopDistance;
     //private int currentWaypoint = 0;
-    private GameObject nearestWaypoint;
+    public GameObject nearestWaypoint;
     private bool firstWaypointWasReached = false;
 
     public float hearingDistance; // Variable to hold hearing
