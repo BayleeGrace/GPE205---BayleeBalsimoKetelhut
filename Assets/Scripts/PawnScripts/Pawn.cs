@@ -18,11 +18,6 @@ public abstract class Pawn : MonoBehaviour
         noiseMaker = GetComponent<NoiseMaker>();
     }
 
-    public virtual void Update() // Use virtual in case we might override Start in our child functions
-    {
-        
-    }
-
     // Abstract makes it so that this function is abstract and cannot be used with this code (we use this bc it's a component)
     public abstract void MoveForward();
     public abstract void MoveBackward();

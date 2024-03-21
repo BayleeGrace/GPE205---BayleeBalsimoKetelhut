@@ -27,13 +27,12 @@ public class PlayerController : Controller
     }
 
     // Update is called once per frame
-    public override void Update()
+    public void FixedUpdate()
     {
         // Process your keyboard inputs
         ProcessInputs();
 
         // Run the Update() fx from the parent class
-        base.Update();
     }
 
     public override void ProcessInputs() // I'm not sure why we do this?

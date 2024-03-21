@@ -42,9 +42,8 @@ public class TankPawn : Pawn
     }
 
     // Update is called once per frame
-    public override void Update()
+    public void FixedUpdate()
     {
-        base.Update();
         //CheckFireRate();
     }
 

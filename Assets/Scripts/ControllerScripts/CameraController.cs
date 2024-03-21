@@ -13,7 +13,7 @@ public class CameraController : MonoBehaviour
     {
         
     }
-    public void LateUpdate()
+    public void FixedUpdate()
     {
         if (GameManager.instance.players[0] != null)
         {
