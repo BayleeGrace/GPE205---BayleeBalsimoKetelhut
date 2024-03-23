@@ -13,7 +13,8 @@ public class GameManager : MonoBehaviour
     public CameraController cameraControllerPrefab;
     public GameObject[] enemyControllerPrefabs; // Variable to reference the AI controllers and their pawns
     //public GameObject enemyPawnPrefab; **Not used d/t controller being contained within enemy prefab, may need to be used later!**
-    public PawnSpawnPoint currentSpawnPoint; // Variable to hold the current spawn location
+    private PawnSpawnPoint currentSpawnPoint; // Variable to hold the current spawn location 
+    private List<Transform> currentPatrolWaypoints;
     public MapGenerator mapGenerator; // Variable to reference the Map Generator
     private bool mapIsSpawned = false;
     public static GameManager instance; // Variable to reference the GameManager
@@ -28,6 +29,7 @@ public class GameManager : MonoBehaviour
     public GameObject CreditsScreenStateObject; // Credits Screen STATE
     public GameObject GameplayStateObject; // Gameplay STATE!
     public GameObject GameOverScreenStateObject; // Game Over Screen STATE
+    public GameObject PauseMenuSceenStateObject;
     #endregion Game States;
     
     private void Awake()
@@ -69,6 +71,7 @@ public class GameManager : MonoBehaviour
 
         // Hook them up!
         newPlayerController.pawn = newPlayerPawn;
+        newPlayerPawn.controller = newPlayerController;
 
         isPlayerSpawned = true;
         SpawnPlayerCamera();
@@ -146,8 +149,19 @@ public class GameManager : MonoBehaviour
         MainMenuStateObject.SetActive(false);
         OptionsScreenStateObject.SetActive(false);
         CreditsScreenStateObject.SetActive(false);
-        GameplayStateObject.SetActive(false);
+        //GameplayStateObject.SetActive(false);
         GameOverScreenStateObject.SetActive(false);
+        PauseMenuSceenStateObject.SetActive(false);
+    }
+
+    private void DeactiveGameplayState()
+    {
+        GameplayStateObject.SetActive(false);
+    }
+
+    public void DeactivatePauseMenuState()
+    {
+        PauseMenuSceenStateObject.SetActive(false);
     }
 
     #region Game State Activators;
@@ -157,6 +171,7 @@ public class GameManager : MonoBehaviour
     {
         // Deactivate all states
         DeactivateAllStates();
+        DeactiveGameplayState();
         // Activate the title screen
         TitleScreenStateObject.SetActive(true); // Set activate activates that object
     }
@@ -165,6 +180,7 @@ public class GameManager : MonoBehaviour
     {
         // Deactivate all states
         DeactivateAllStates();
+        DeactiveGameplayState();
         // Activate the title screen
         MainMenuStateObject.SetActive(true); // Set activate activates that object
     }
@@ -181,6 +197,7 @@ public class GameManager : MonoBehaviour
     {
         // Deactivate all states
         DeactivateAllStates();
+        DeactiveGameplayState();
         // Activate the title screen
         CreditsScreenStateObject.SetActive(true); // Set activate activates that object
     }
@@ -189,6 +206,7 @@ public class GameManager : MonoBehaviour
     {
         // Deactivate all states
         DeactivateAllStates();
+        DeactivatePauseMenuState();
         // Activate the title screen
         GameplayStateObject.SetActive(true); // Set activate activates that object
 
@@ -208,10 +226,14 @@ public class GameManager : MonoBehaviour
                 // Delete all rooms that currently exist (currentRooms)
                 foreach (var room in currentRooms)
                 {
-                    Destroy(room.gameObject);
+                    room.gameObject.SetActive(false);
                 }
                 // Generate a new map
                 mapGenerator.GenerateMap();
+                foreach (var room in currentRooms)
+                {
+                    Destroy(room.gameObject);
+                }
             }
         }
 
@@ -224,8 +246,17 @@ public class GameManager : MonoBehaviour
     {
         // Deactivate all states
         DeactivateAllStates();
+        DeactiveGameplayState();
         // Activate the title screen
         GameOverScreenStateObject.SetActive(true); // Set activate activates that object
+    }
+
+    public void ActivatePauseMenuScreen()
+    {
+        // Deactivate all states
+        DeactivateAllStates();
+        // Activate the pause menu screen
+        PauseMenuSceenStateObject.SetActive(true);
     }
 
     #endregion Game State Activators;

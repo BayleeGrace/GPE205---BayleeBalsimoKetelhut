@@ -7,8 +7,17 @@ public class ButtonPressToStart : MonoBehaviour
 {
     public void ChangeToGameplay()
     {
-        if (GameManager.instance != null) {
+        if (GameManager.instance != null) 
+        {
             GameManager.instance.ActivateGameplay();
+        }
+    }
+
+    public void DeactivatePauseState()
+    {
+        if (GameManager.instance != null) 
+        {
+            GameManager.instance.DeactivatePauseMenuState();
         }
     }
 }

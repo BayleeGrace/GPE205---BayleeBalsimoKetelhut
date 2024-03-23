@@ -49,7 +49,7 @@ MonoBehaviour:
   patrolWaypoints: []
   waypointStopDistance: 4
   nearestWaypoint: {fileID: 0}
-  hearingDistance: 7
+  hearingDistance: 10
   fieldOfView: 90
   maxViewDistance: 5
   lastHit: {fileID: 0}

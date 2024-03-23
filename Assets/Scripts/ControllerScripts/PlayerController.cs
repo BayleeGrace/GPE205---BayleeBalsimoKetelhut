@@ -12,6 +12,8 @@ public class PlayerController : Controller
 
     // variable for the shoot function
     public KeyCode shootKey;
+    // Variable to hold the pause game fx
+    public KeyCode pauseKey;
 
     // Start is called before the first frame update
     public void Awake()
@@ -72,6 +74,11 @@ public class PlayerController : Controller
         if (!Input.GetKey(moveForwardKey) && !Input.GetKey(moveBackwardKey) && !Input.GetKey(rotateClockwiseKey) && !Input.GetKey(rotateCounterClockwiseKey) && !Input.GetKeyDown(shootKey))
         {
             pawn.StopNoise();
+        }
+
+        if (Input.GetKeyDown(pauseKey))
+        {
+            GameManager.instance.ActivatePauseMenuScreen();
         }
     }
 
