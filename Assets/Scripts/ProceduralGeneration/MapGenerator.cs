@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 [System.Serializable]
 public class MapGenerator : MonoBehaviour
@@ -16,16 +18,52 @@ public class MapGenerator : MonoBehaviour
 
     public List<PawnSpawnPoint> spawnPoints;
 
+    #region Seed Variables
+    //private int[] noiseValues;
+    [SerializeField] public int seedNumber;
+    [SerializeField] private TMP_InputField inputSeed;
+    private bool isSeedEntered;
+    #endregion Seed Variables
+
     #endregion Variables
-    
+
     public void Start()
     {
+        SetMap();
+
         PawnSpawnPoint[] spawnPoint = FindObjectsOfType<PawnSpawnPoint>();
         foreach (var spawn in spawnPoint)
         {
             spawnPoints.Add(spawn);
         }
     }
+
+    #region Seed Generation
+    public void SetMap()
+    {
+        if (isSeedEntered == true)
+        {
+            seedNumber = int.Parse(inputSeed.text);
+        }
+        else if (isSeedEntered == false)
+        {
+            seedNumber = Random.Range(0,99999);
+        }
+        // Starts the sequence of the random numbers...
+        Random.InitState(seedNumber);
+    }
+
+    public void SetSeedByRandom()
+    {
+        isSeedEntered = false;
+    }
+
+    public void SetSeedByInput()
+    {
+        isSeedEntered = true;
+    }
+
+    #endregion Seed Generation
     
     public void GenerateMap()
     {

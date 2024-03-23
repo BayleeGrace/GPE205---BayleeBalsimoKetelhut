@@ -11,6 +11,11 @@ public class CameraController : MonoBehaviour
     
     public void Start()
     {
+        
+    }
+    public void FixedUpdate()
+    {
+
         if (GameManager.instance != null)
         {
             if (GameManager.instance.players[0] != null)
@@ -19,9 +24,7 @@ public class CameraController : MonoBehaviour
                 playerCamera = GameManager.instance.cameraPrefab;
             }
         }
-    }
-    public void FixedUpdate()
-    {
+
         targetTransform = targetPlayer.transform;
 
         if (playerCamera != null)

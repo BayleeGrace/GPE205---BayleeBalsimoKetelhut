@@ -188,7 +188,7 @@ public class GameManager : MonoBehaviour
     public void ActivateOptionsScreen()
     {
         // Deactivate all states
-        DeactivateAllStates();
+        //DeactivateAllStates();
         // Activate the title screen
         OptionsScreenStateObject.SetActive(true); // Set activate activates that object
     }
@@ -213,6 +213,7 @@ public class GameManager : MonoBehaviour
         // Generate NEW map if the Map Generator exists
         if (mapGenerator != null)
         {
+            int currentSeed = mapGenerator.seedNumber;
             if (mapIsSpawned == false)
             {
                 // Generate a new map
@@ -223,13 +224,14 @@ public class GameManager : MonoBehaviour
             {
                 // Add all spawned rooms to an array
                 Room[] currentRooms = FindObjectsOfType<Room>();
-                // Delete all rooms that currently exist (currentRooms)
+                // Hide all rooms that currently exist
                 foreach (var room in currentRooms)
                 {
                     room.gameObject.SetActive(false);
                 }
                 // Generate a new map
                 mapGenerator.GenerateMap();
+                mapGenerator.SetMap();
                 foreach (var room in currentRooms)
                 {
                     Destroy(room.gameObject);
