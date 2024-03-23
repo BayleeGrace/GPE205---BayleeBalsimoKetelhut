@@ -34,7 +34,7 @@ Transform:
   m_GameObject: {fileID: 3453907330998941506}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -1.0025247, y: 0.402, z: -0.84310734}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
   m_Children:
   - {fileID: 867495620187984873}
   m_Father: {fileID: 0}
@@ -101,7 +101,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 10
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -144,15 +144,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f04bb3fb14629b4c91d6bfcebe41b82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  turnSpeed: 135
+  moveSpeed: 8.2
+  turnSpeed: 150
   mover: {fileID: 2535482313733260802}
   fireRate: 3
+  noiseMaker: {fileID: 0}
+  noiseMakerVolume: 0
   shooter: {fileID: 6766521778717739339}
   tankShellPrefab: {fileID: 8063939962284642360, guid: 944d17993a4db48f4821cc89aa3436c9, type: 3}
   fireForce: 750
   damageDone: 25
   lifespan: 1.5
+  nextEventTime: 0
+  timerDelay: 0
 --- !u!114 &6766521778717739339
 MonoBehaviour:
   m_ObjectHideFlags: 0

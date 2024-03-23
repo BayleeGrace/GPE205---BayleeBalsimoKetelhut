@@ -12,14 +12,14 @@ public abstract class AIController : Controller
     // State variables
     public AIState currentState;
     private float lastStateChangeTime; // Variable for tracking how long it takes for states to change
-    public GameObject target; // Stores the target that the AIController will be seeking
+    public GameObject targetPlayer; // Stores the targetPlayer that the AIController will be seeking
 
     // Patrol variables
     //public Transform[] patrolWaypoints;
     public List<Transform> patrolWaypoints;
     public float waypointStopDistance;
     //private int currentWaypoint = 0;
-    public GameObject nearestWaypoint;
+    public Transform nearestWaypoint;
     private bool firstWaypointWasReached = false;
 
     public float hearingDistance; // Variable to hold hearing
@@ -61,60 +61,52 @@ public abstract class AIController : Controller
 
     public override void ProcessInputs() // this is overriding the Controller "ProcessInputs()"
     {
-        
-        #region State Transitions;
-        switch(currentState) // Switch changes the enum based on the current state given
+        if(IsHasTarget())
         {
-            case AIState.Idle:
-                // Do work for the Idle state
-                DoIdleState();
-                currentState = AIState.Idle;
-                if (IsCanHear(target) || IsCanSee(target))
-                {
-                    ChangeState(AIState.Chase);
-                }
-                //Check for any transitions
-                break; // break; is important because it will only execute the "Idle" state before executing the other states.
+            #region State Transitions;
+            switch(currentState) // Switch changes the enum based on the current state given
+            {
+                case AIState.Idle:
+                    // Do work for the Idle state
+                    DoIdleState();
+                    currentState = AIState.Idle;
+                    if (IsCanHear(targetPlayer) || IsCanSee(targetPlayer) || IsCanHear(targetPlayer) && IsCanSee(targetPlayer))
+                    {
+                        ChangeState(AIState.Chase);
+                    }
+                    //Check for any transitions
+                    break; // break; is important because it will only execute the "Idle" state before executing the other states.
 
-            case AIState.Patrol:
-                DoPatrolState();
-                currentState = AIState.Patrol;
-                // Check for transitions
-                if ((IsCanSee(target) && IsDistanceLessThan(target, hearingDistance)) || (IsCanHear(target) && IsDistanceLessThan(target, hearingDistance)))
-                {
-                    ChangeState(AIState.Chase);
-                }
-                break;
+                case AIState.Patrol:
+                    DoPatrolState();
+                    currentState = AIState.Patrol;
+                    // Check for transitions
+                    if (IsCanHear(targetPlayer) || IsCanSee(targetPlayer) || (IsCanHear(targetPlayer) && IsCanSee(targetPlayer)))
+                    {
+                        ChangeState(AIState.Chase);
+                    }
+                    break;
 
-            case AIState.Chase:
-                DoChaseState();
-                currentState = AIState.Chase;
-                // Check for transitions
-                if (IsInLineOfSight(target) && IsCanSee(target) && IsDistanceLessThan(target, 8/*change to variable after testing*/))
-                {
-                    ChangeState(AIState.Attack);
-                }
-                else if (target == null || !IsDistanceLessThan(target, hearingDistance))
-                {
-                    ChangeState(AIState.Patrol);
-                }
-                break;
-
-            case AIState.Attack:
-                DoAttackState();
-                // Check for transitions
-                if(!IsInLineOfSight(target))
-                {
-                    ChangeState(AIState.Chase);
-                }
-                if(!IsDistanceLessThan(target, hearingDistance))
-                {
-                    ChangeState(AIState.Patrol);
-                }
-                break;
+                case AIState.Chase:
+                    DoChaseState();
+                    currentState = AIState.Chase;
+                    // Check for transitions
+                    if (targetPlayer == null || !IsDistanceLessThan(targetPlayer, hearingDistance))
+                    {
+                        ChangeState(AIState.Patrol);
+                    }
+                    break;
+            }
+            #endregion State Transitions;
         }
-        #endregion State Transitions;
-
+        else if (GameManager.instance.players != null)
+        {
+            TargetPlayerOne();
+        }
+        else if (GameManager.instance.players == null)
+        {
+            ChangeState(AIState.Patrol);
+        }
     }
 
     /// <summary> ChangeState()
@@ -137,40 +129,41 @@ public abstract class AIController : Controller
     
     #region Seek functions;
     
-    public void Seek(GameObject target)
+    public void Seek(GameObject targetPlayer)
     {
         // Chase a GAMEOBJECT's position
-        if (target != null)
+        if (targetPlayer != null)
         {
             currentState = AIState.Chase;
-            // Rotate towards the target
-            pawn.RotateTowards(target.transform.position);
-            // Move Forward towards the target
+            // Rotate towards the targetPlayer
+            pawn.RotateTowards(targetPlayer.transform.position);
+            // Move Forward towards the targetPlayer
             pawn.MoveForward();
         }
         else
         {
+            Seek(nearestWaypoint);
             ChangeState(AIState.Patrol);
         }
     }
 
-    public void Seek(Transform targetTransform)
+    public void Seek(Transform targetPlayerTransform)
     {
-        if (targetTransform != null)
+        if (targetPlayerTransform != null)
         {
-            // Seek the position of our target transform
-            pawn.RotateTowards(targetTransform.position);
+            // Seek the position of our targetPlayer transform
+            pawn.RotateTowards(targetPlayerTransform.position);
             // Move Forward
             pawn.MoveForward();
         }
     }
 
-    public void Seek(Vector3 targetPosition)
+    public void Seek(Vector3 targetPlayerPosition)
     {
-        if (targetPosition != null)
+        if (targetPlayerPosition != null)
         {
             // RotateTowards the Funciton
-            pawn.RotateTowards(targetPosition);
+            pawn.RotateTowards(targetPlayerPosition);
             // Move Forward
             pawn.MoveForward();
         }
@@ -181,31 +174,31 @@ public abstract class AIController : Controller
 
     public virtual void DoPatrolState()
     {
-        if (IsHasTarget())
+        if (patrolWaypoints != null)
         {
-            if (patrolWaypoints != null)
+            FindNearestPatrolWaypoint();
+            if (IsDistanceLessThan(nearestWaypoint.gameObject, (waypointStopDistance)))
             {
-                FindNearestPatrolWaypoint();
-                if (IsDistanceLessThan(nearestWaypoint, (waypointStopDistance)))
+                // Then seek that waypoint
+                Seek(nearestWaypoint);
+                if (Vector3.Distance(pawn.transform.position, nearestWaypoint.position) <= waypointStopDistance)
                 {
-                    // Then seek that waypoint
-                    Seek(nearestWaypoint);
-                    if (Vector3.Distance(pawn.transform.position, nearestWaypoint.transform.position) <= waypointStopDistance)
-                    {
-                        firstWaypointWasReached = true;
-                    }
-                }
-                else if ((!IsDistanceLessThan(nearestWaypoint, waypointStopDistance)) || firstWaypointWasReached == true)
-                {
-                    PatrolWaypoint nextWaypoint = nearestWaypoint.GetComponent<PatrolWaypoint>().nextWaypoint;
-
-                    Seek(nextWaypoint.gameObject);
-                }
-                else
-                {
+                    firstWaypointWasReached = true;
                     RestartPatrol();
                 }
             }
+            else if ((!IsDistanceLessThan(nearestWaypoint.gameObject, waypointStopDistance)) || firstWaypointWasReached == true)
+            {
+                Transform nextWaypoint = nearestWaypoint.GetComponent<PatrolWaypoint>().nextWaypoint.transform;
+                nearestWaypoint = nextWaypoint;
+
+                Seek(nearestWaypoint);
+                RestartPatrol();
+            }
+            /*else
+            {
+                RestartPatrol();
+            }*/
         }
     }
     
@@ -216,40 +209,39 @@ public abstract class AIController : Controller
         if (firstWaypointWasReached == false)
         {
             // Assume the first waypoint in the array is the nearest
-            nearestWaypoint = patrolWaypoints[0].gameObject;
+            nearestWaypoint = patrolWaypoints[0].transform;
 
-            float distanceToNearestWaypoint = Vector3.Distance(nearestWaypoint.transform.position, pawn.transform.position);
+            float distanceToNearestWaypoint = Vector3.Distance(nearestWaypoint.position, pawn.transform.position);
 
             // Compare the current waypoint's Vector distance to all other waypoint distances in the list
             foreach (var patrolWaypoint in patrolWaypoints)
             {
-                if (patrolWaypoint.gameObject != nearestWaypoint)
+                if (patrolWaypoint.gameObject != nearestWaypoint.gameObject)
                 {
                     // Find the distance between the AI and each patrolWaypoint
                     float distanceToNewWaypoint = Vector3.Distance(patrolWaypoint.position, pawn.transform.position);
                     if (distanceToNewWaypoint < distanceToNearestWaypoint)
                     {
                         distanceToNewWaypoint = distanceToNearestWaypoint;
-                        nearestWaypoint = patrolWaypoint.gameObject;
-                        //Debug.Log("Nearest waypoint for " + pawn + " is " + nearestWaypoint);
+                        nearestWaypoint = patrolWaypoint.transform;
+                        //Debug.Log("Nearest waypoint for " + pawn + " changed to " + nearestWaypoint);
                     }
                 }
             }
         }
         else if (firstWaypointWasReached == true)
         {
-            float distanceToNearestWaypoint = Vector3.Distance(nearestWaypoint.transform.position, pawn.transform.position);
+            float distanceToNearestWaypoint = Vector3.Distance(nearestWaypoint.position, pawn.transform.position);
 
             foreach (var patrolWaypoint in patrolWaypoints)
             {
-                GameObject nextWaypoint = nearestWaypoint.GetComponent<PatrolWaypoint>().nextWaypoint.gameObject;
+                Transform nextWaypoint = nearestWaypoint.GetComponent<PatrolWaypoint>().nextWaypoint.transform;
 
-                float distanceToNewWaypoint = Vector3.Distance(nextWaypoint.transform.position, pawn.transform.position);
+                float distanceToNewWaypoint = Vector3.Distance(nextWaypoint.position, pawn.transform.position);
                     if (distanceToNewWaypoint < distanceToNearestWaypoint)
                     {
                         distanceToNewWaypoint = distanceToNearestWaypoint;
                         nearestWaypoint = nextWaypoint;
-                        //Debug.Log("Nearest waypoint for " + pawn + " is " + nearestWaypoint);
                     }
             }
         }
@@ -258,8 +250,8 @@ public abstract class AIController : Controller
     protected void RestartPatrol()
     {
         // Reset the current array index back to 0
-        //FindNearestPatrolWaypoint();
-        //currentWaypoint = patrolWaypoints[0];
+        FindNearestPatrolWaypoint();
+        nearestWaypoint = patrolWaypoints[0];
     }
 
     #endregion Patrol functions;
@@ -268,10 +260,10 @@ public abstract class AIController : Controller
 
     public virtual void DoChaseState()
     {
-        // Seek our target
-        if (target != null)
+        // Seek our targetPlayer
+        if (targetPlayer != null)
         {
-        Seek(target);
+        Seek(targetPlayer);
         }
     }
 
@@ -281,7 +273,17 @@ public abstract class AIController : Controller
 
     public virtual void DoAttackState()
     {
-        Debug.Log(pawn.name + "Is Attacking...");
+        if (targetPlayer != null)
+        {
+            // Chase
+            Seek(targetPlayer);
+            // Shoot
+            pawn.Shoot();
+        }
+        else if (targetPlayer == null)
+        {
+            ChangeState(AIState.Patrol);
+        }
     }
     
     #endregion Attack functions;
@@ -316,48 +318,48 @@ public abstract class AIController : Controller
     #region AI senses;
     
     /// <summary> IsCanHear()
-    /// Grabs the target's NoiseMaker (if it exists) and returns if the target is being heard
+    /// Grabs the targetPlayer's NoiseMaker (if it exists) and returns if the targetPlayer is being heard
     /// </summary>
-    public bool IsCanHear(GameObject target)
+    public bool IsCanHear(GameObject targetPlayer)
     {
-        // Get the target's NoiseMaker
-        NoiseMaker noiseMaker = target.GetComponent<NoiseMaker>();
-        // If they don't have one, they can't make noise, so return false
-        if (noiseMaker == null) 
-        {
-            return false;
-        }
-        // If they are making 0 noise, they also can't be heard
-        if (noiseMaker.volumeDistance <= 0) 
-        {
-            return false;
-        }
-        // If they are making noise, add the volumeDistance in the noisemaker to the hearingDistance of this AI
-        float totalDistance = noiseMaker.volumeDistance + hearingDistance;
-        // If the distance between our pawn and target is closer than this...
-        if (Vector3.Distance(pawn.transform.position, target.transform.position) <= totalDistance) 
-        {
-            // ... then we can hear the target
-            return true;
-        }
-        else 
-        {
-            // Otherwise, we are too far away to hear them
-            return false;
-        }
+            // Get the targetPlayer's NoiseMaker
+            NoiseMaker noiseMaker = targetPlayer.GetComponent<NoiseMaker>();
+            // If they don't have one, they can't make noise, so return false
+            if (noiseMaker == null) 
+            {
+                return false;
+            }
+            // If they are making 0 noise, they also can't be heard
+            if (noiseMaker.volumeDistance <= 0) 
+            {
+                return false;
+            }
+            // If they are making noise, add the volumeDistance in the noisemaker to the hearingDistance of this AI
+            float totalDistance = noiseMaker.volumeDistance + hearingDistance;
+            // If the distance between our pawn and targetPlayer is closer than this...
+            if (Vector3.Distance(pawn.transform.position, targetPlayer.transform.position) <= totalDistance) 
+            {
+                // ... then we can hear the targetPlayer
+                return true;
+            }
+            else 
+            {
+                // Otherwise, we are too far away to hear them
+                return false;
+            }
     }
 
     /// <summary> IsCanSee()
-    /// Grabs the target's position, finds the vector between this object's position and the target, and checks if that angle difference is within the FOV
+    /// Grabs the targetPlayer's position, finds the vector between this object's position and the targetPlayer, and checks if that angle difference is within the FOV
     /// </summary>
-    public bool IsCanSee(GameObject target)
+    public bool IsCanSee(GameObject targetPlayer)
     {
-        // Find the vector from the agent to the target
-        Vector3 agentToTargetVector = target.transform.position - transform.position;
-        // Find the angle between the direction our agent is facing (forward in local space) and the vector to the target.
-        float angleToTarget = Vector3.Angle(agentToTargetVector, pawn.transform.forward);
+        // Find the vector from the agent to the targetPlayer
+        Vector3 agentTotargetPlayerVector = targetPlayer.transform.position - transform.position;
+        // Find the angle between the direction our agent is facing (forward in local space) and the vector to the targetPlayer.
+        float angleTotargetPlayer = Vector3.Angle(agentTotargetPlayerVector, pawn.transform.forward);
         // if that angle is less than our field of view
-        if (angleToTarget < fieldOfView) 
+        if (angleTotargetPlayer < fieldOfView) 
         {
             return true;
         }
@@ -382,11 +384,11 @@ public abstract class AIController : Controller
     }
 
     /// <summary> IsInLineOfSight()
-    /// Determines if the TARGET is in the exact line of sight of the enemy AI
+    /// Determines if the targetPlayer is in the exact line of sight of the enemy AI
     /// </summary>
-    public bool IsInLineOfSight(GameObject target)
+    public bool IsInLineOfSight(GameObject targetPlayer)
     {
-        if (target == lastHit)
+        if (targetPlayer == lastHit)
         {
             return true;
         }
@@ -405,12 +407,12 @@ public abstract class AIController : Controller
     #endregion AI senses;
 
     /// <summary> IsDistanceLessThan()
-    /// Compare distance between this object's position and target game object's position
+    /// Compare distance between this object's position and targetPlayer game object's position
     /// </summary>
-    protected bool IsDistanceLessThan(GameObject target, float distance)
+    protected bool IsDistanceLessThan(GameObject targetPlayer, float distance)
     {
-        // Compare transform distance of two pawns, the owner of this component and target pawn
-        if (Vector3.Distance(pawn.transform.position, target.transform.position) < distance)
+        // Compare transform distance of two pawns, the owner of this component and targetPlayer pawn
+        if (Vector3.Distance(pawn.transform.position, targetPlayer.transform.position) < distance)
         {
             return true;
         }
@@ -420,8 +422,8 @@ public abstract class AIController : Controller
         }
     }
 
-    /// <summary> TargetPlayerOne()
-    /// Take the first player in the list of "players" within the Game Manager, and Target that player (if that player exists)
+    /// <summary> targetPlayerOne()
+    /// Take the first player in the list of "players" within the Game Manager, and targetPlayer that player (if that player exists)
     /// </summary>
     public void TargetPlayerOne()
     {
@@ -431,20 +433,20 @@ public abstract class AIController : Controller
             // And there are existing players
             if(GameManager.instance.players.Count > 0)
             {
-                //then target the first player controller in the Game instance
-                target = GameManager.instance.players[0].pawn.gameObject;
+                    //then targetPlayer the first player controller in the Game instance
+                    targetPlayer = GameManager.instance.players[0].pawn.gameObject;
             }
         }
     }
 
-    /// <summary> IsHasTarget()
-    /// Tracks if the AI's target exists
+    /// <summary> IsHastargetPlayer()
+    /// Tracks if the AI's targetPlayer exists
     /// </summary>
     protected bool IsHasTarget()
     {
-        // return true, we have target
-        return (target != null);
-        // false, we dont have a target
+        // return true, we have targetPlayer
+        return (targetPlayer != null);
+        // false, we dont have a targetPlayer
     }
     
     // Removes this object from the enemies array in the Game Manager

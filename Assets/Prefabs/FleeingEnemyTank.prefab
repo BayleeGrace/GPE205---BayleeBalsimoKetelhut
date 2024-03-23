@@ -45,12 +45,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pawn: {fileID: 6432117679556548956}
   currentState: 0
-  target: {fileID: 0}
+  targetPlayer: {fileID: 0}
   patrolWaypoints: []
-  waypointStopDistance: 2
-  hearingDistance: 3
+  waypointStopDistance: 4
+  nearestWaypoint: {fileID: 0}
+  hearingDistance: 7
   fieldOfView: 90
-  maxViewDistance: 0
+  maxViewDistance: 5
   lastHit: {fileID: 0}
   collision: {x: 0, y: 0, z: 0}
   fleeDistance: 10
@@ -67,11 +68,15 @@ PrefabInstance:
       objectReference: {fileID: 2849420656499185172}
     - target: {fileID: 2535482313733260803, guid: 15ef9dfc83f9144c5b6c35c5026053a9, type: 3}
       propertyPath: fireRate
-      value: 0.5
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 2535482313733260803, guid: 15ef9dfc83f9144c5b6c35c5026053a9, type: 3}
       propertyPath: moveSpeed
-      value: 4
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2535482313733260803, guid: 15ef9dfc83f9144c5b6c35c5026053a9, type: 3}
+      propertyPath: damageDone
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 2640638554916482552, guid: 15ef9dfc83f9144c5b6c35c5026053a9, type: 3}
       propertyPath: m_RootOrder

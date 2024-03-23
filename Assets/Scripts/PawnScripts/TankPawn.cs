@@ -16,7 +16,8 @@ public class TankPawn : Pawn
     public float lifespan;
     // Variabe to track when the next event will happen
     public float nextEventTime;
-    private float timerDelay;
+    [HideInInspector]
+    public float timerDelay;
 
     private bool isPlayer;
     

@@ -21,47 +21,60 @@ public class FleeingAIController : AIController
 
     public override void ProcessInputs()
     {
-        base.ProcessInputs();
-        switch(currentState) // Switch changes states
+        if (IsHasTarget())
         {
-            case AIState.Idle:
-                // Do work for the Idle state
-                DoIdleState();
-                currentState = AIState.Idle;
-                //Check for any transitions
-                if(IsDistanceLessThan(target, fleeDistance))
-                {
-                    ChangeState(AIState.Flee);
-                }
-                break;
-                // break; is important because it will only execute the "Idle" state before executing the other states.
+            switch(currentState) // Switch changes states
+            {
+                case AIState.Idle:
+                    // Do work for the Idle state
+                    base.DoIdleState();
+                    currentState = AIState.Idle;
+                    //Check for any transitions
+                    if(IsCanHear(targetPlayer) || IsCanSee(targetPlayer) || (IsCanHear(targetPlayer) && IsCanSee(targetPlayer)))  
+                    {
+                        ChangeState(AIState.Flee);
+                    }   
+                    break;
+                    // break; is important because it will only execute the "Idle" state before executing the other states.
 
-            case AIState.Patrol:
-                DoPatrolState();
-                currentState = AIState.Patrol;
-                // Check for transitions
-                if(IsDistanceLessThan(target, fleeDistance))   
-                {
-                    ChangeState(AIState.Flee);
-                }            
-                break;
+                case AIState.Patrol:
+                    base.DoPatrolState();
+                    currentState = AIState.Patrol;
+                    // Check for transitions
+                    if(IsCanHear(targetPlayer) || IsCanSee(targetPlayer) || (IsCanHear(targetPlayer) && IsCanSee(targetPlayer)))  
+                    {
+                        ChangeState(AIState.Flee);
+                    }     
+                    break;
 
-            case AIState.Flee:
-                if(IsHasTarget())
-                {
-                DoFleeState();
-                }
-                else
-                {
-                    TargetPlayerOne();
-                }
-                currentState = AIState.Flee;
-                // Check for transitions
-                if(!IsDistanceLessThan(target, fleeDistance))
-                {
-                    ChangeState(AIState.Patrol);
-                }
-                break;
+                case AIState.Flee:
+                    if(IsHasTarget())
+                    {
+                        DoFleeState();
+                    }
+                    else
+                    {
+                        TargetPlayerOne();
+                    }
+                    currentState = AIState.Flee;
+                    // Check for transitions
+                    if(targetPlayer == null || (!IsCanHear(targetPlayer) && !IsCanSee(targetPlayer)))  
+                    {
+                        ChangeState(AIState.Flee);
+                    }
+                    {
+                        ChangeState(AIState.Patrol);
+                    }
+                    break;
+            }
+        }
+        else if (GameManager.instance.players != null)
+        {
+            TargetPlayerOne();
+        }
+        else if (GameManager.instance.players == null)
+        {
+            ChangeState(AIState.Patrol);
         }
     }
 
@@ -69,7 +82,7 @@ public class FleeingAIController : AIController
     {
         base.DoFleeState();
         // Find the Vector to our target
-        Vector3 vectorToTarget = target.transform.position - pawn.transform.position;
+        Vector3 vectorToTarget = targetPlayer.transform.position - pawn.transform.position;
         // Find the Vector away from our target by multiplying by -1
         Vector3 vectorAwayFromTarget = -vectorToTarget;
         // Find the vector we would travel down in order to flee

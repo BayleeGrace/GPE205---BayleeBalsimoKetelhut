@@ -45,9 +45,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pawn: {fileID: 5079331232283655291}
   currentState: 0
-  target: {fileID: 0}
+  targetPlayer: {fileID: 0}
   patrolWaypoints: []
   waypointStopDistance: 2
+  nearestWaypoint: {fileID: 0}
   hearingDistance: 0
   fieldOfView: 0
   maxViewDistance: 0

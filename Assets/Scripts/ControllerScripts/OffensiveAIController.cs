@@ -22,62 +22,65 @@ public class OffensiveAIController : AIController
     public override void ProcessInputs() // this is overriding the Controller "ProcessInputs()"
     {
         base.ProcessInputs();
-        /*switch(currentState) // Switch changes states
+        if (IsHasTarget())
         {
-            case AIState.Idle:
-                // Do work for the Idle state
-                DoIdleState();
-                currentState = AIState.Idle;
-                //Check for any transitions
-                if(IsDistanceLessThan(target, distanceUntilChase) && IsCanHear(target))
-                {
-                    ChangeState(AIState.Chase);
-                }
-                break;
-                // break; is important because it will only execute the "Idle" state before executing the other states.
+            switch(currentState) // Switch changes states
+            {
+                case AIState.Chase:
+                    if(IsHasTarget())
+                    {
+                        DoChaseState();
+                        currentState = AIState.Chase;
+                    }
+                    else
+                    {
+                        TargetPlayerOne();
+                    }
+                    // Check for transitions
+                    if(IsInLineOfSight(targetPlayer) && IsCanSee(targetPlayer) && IsDistanceLessThan(targetPlayer, 8/*change to variable after testing*/))
+                    {
+                        ChangeState(AIState.Attack);
+                    }
+                    else if(targetPlayer == null || !IsDistanceLessThan(targetPlayer, hearingDistance))
+                    {
+                        ChangeState(AIState.Patrol);
+                    }
+                    break;
 
-            case AIState.Chase:
-                if(IsHasTarget())
-                {
-                DoChaseState();
-                }
-                else
-                {
-                    TargetPlayerOne();
-                }
-                currentState = AIState.Chase;
-                // Check for transitions
-                if(IsDistanceLessThan(target, distanceUntilAttack))
-                {
-                    ChangeState(AIState.Attack);
-                }
-                else if(!IsDistanceLessThan(target, distanceUntilChase))
-                {
-                    ChangeState(AIState.Patrol);
-                }
-                break;
+                case AIState.Patrol:
+                    base.DoPatrolState();
+                    currentState = AIState.Patrol;
+                    // Check for transitions
+                    if(IsCanHear(targetPlayer) || IsCanSee(targetPlayer) || (IsCanHear(targetPlayer) && IsCanSee(targetPlayer)))
+                    {
+                        ChangeState(AIState.Chase);
+                    }
+                    break;
 
-            case AIState.Patrol:
-                DoPatrolState();
-                currentState = AIState.Patrol;
-                // Check for transitions
-                if(IsCanSee(target) && IsCanHear(target))
-                {
-                    ChangeState(AIState.Chase);
-                }
-                break;
+                case AIState.Attack:
+                    base.DoAttackState();
+                    currentState = AIState.Attack;
+                    // Check for transitions
+                    if (!IsInLineOfSight(targetPlayer))
+                    {
+                        ChangeState(AIState.Chase);
+                    }
+                    else if(!IsDistanceLessThan(targetPlayer, hearingDistance) || !IsCanSee(targetPlayer))
+                    {
+                        ChangeState(AIState.Patrol);
+                    }
+                    break;
 
-            case AIState.Attack:
-                DoAttackState();
-                currentState = AIState.Attack;
-                //Check for transitions
-                if (!IsDistanceLessThan(target, distanceUntilAttack))
-                {
-                    ChangeState(AIState.Chase);
-                }
-                break;
-
-        }*/
+            }
+        }
+        else if (GameManager.instance.players != null)
+        {
+            TargetPlayerOne();
+        }
+        else if (GameManager.instance.players == null)
+        {
+            ChangeState(AIState.Patrol);
+        }
 
     }
 
@@ -86,15 +89,15 @@ public class OffensiveAIController : AIController
     public override void DoChaseState()
     {
         base.DoChaseState();
-        // Seek our target
-        if (target != null)
+        /*// Seek our target
+        if (targetPlayer != null)
         {
-        Seek(target);
-        if(IsDistanceLessThan(target, 9))
+        Seek(targetPlayer);
+        if(IsDistanceLessThan(targetPlayer, 9))
         {
             ChangeState(AIState.Attack);
         }
-        }
+        }*/
     }
 
     // Attack State
@@ -102,17 +105,17 @@ public class OffensiveAIController : AIController
     public override void DoAttackState()
     {
         base.DoAttackState();
-        if (target != null)
+        /*if (targetPlayer != null)
         {
             // Chase
-            Seek(target);
+            Seek(targetPlayer);
             // Shoot
             pawn.Shoot();
         }
-        else if (target == null)
+        else if (targetPlayer == null)
         {
             ChangeState(AIState.Patrol);
-        }
+        }*/
     }
 }
 

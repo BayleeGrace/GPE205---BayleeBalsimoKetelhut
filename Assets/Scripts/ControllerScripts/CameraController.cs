@@ -11,19 +11,24 @@ public class CameraController : MonoBehaviour
     
     public void Start()
     {
-        
+        if (GameManager.instance != null)
+        {
+            if (GameManager.instance.players[0] != null)
+            {
+                targetPlayer = GameManager.instance.players[0].pawn.gameObject;
+                playerCamera = GameManager.instance.cameraPrefab;
+            }
+        }
     }
     public void FixedUpdate()
     {
-        if (GameManager.instance.players[0] != null)
-        {
-            targetPlayer = GameManager.instance.players[0].pawn.gameObject;
-            playerCamera = GameManager.instance.cameraPrefab;
-        }
         targetTransform = targetPlayer.transform;
 
-        playerCamera.transform.LookAt(targetTransform);
-        playerCamera.transform.position = targetPlayer.transform.position + offset;
-        //playerCamera.transform.rotation = Quaternion.Euler(Vector3.zero);
+        if (playerCamera != null)
+        {
+            playerCamera.transform.LookAt(targetTransform);
+            playerCamera.transform.position = targetPlayer.transform.position + offset;
+            //playerCamera.transform.rotation = Quaternion.Euler(Vector3.zero);
+        }
     }
 }

@@ -27,7 +27,7 @@ public class PlayerController : Controller
     }
 
     // Update is called once per frame
-    public void FixedUpdate()
+    public override void Update()
     {
         // Process your keyboard inputs
         ProcessInputs();

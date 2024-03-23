@@ -13,17 +13,15 @@ public class IncreasedFireRatePowerup : Powerup
     {
         TankPawn targetPawn = target.GetComponent<TankPawn>();
 
-        newFireRate = targetPawn.fireRate * fireRateMultiplier;
+        newFireRate = targetPawn.timerDelay * fireRateMultiplier;
         // reference the "DamageOnHit" component and increase damage done base on the nultiplier
-        targetPawn.fireRate = newFireRate;
-        Debug.Log("Fire Rate is now " + targetPawn.fireRate);
+        targetPawn.timerDelay = newFireRate;
     }
 
     public override void Remove(PowerupManager target)
     {
         TankPawn targetPawn = target.GetComponent<TankPawn>();
 
-        targetPawn.fireRate = newFireRate / fireRateMultiplier;
-        Debug.Log("Fire Rate is now " + targetPawn.fireRate);
+        targetPawn.timerDelay = newFireRate / fireRateMultiplier;
     }
 }

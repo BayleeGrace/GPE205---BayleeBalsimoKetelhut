@@ -26,44 +26,73 @@ public class TankerAIController : AIController
     public override void ProcessInputs()
     {
         base.ProcessInputs();
-        switch(currentState) // Switch changes states
+        if (IsHasTarget())
         {
-                /*case AIState.Attack:
-                base.DoAttackState();
-                currentState = AIState.Attack;
-                if (health.currentHealth <= healthToEnrage)
-                {
-                    ChangeState(AIState.Enraged);
-                }
-                if(!IsCanHear(target) || !IsDistanceLessThan(target, 12))
-                {
-                    ChangeState(AIState.Patrol);
-                }
-                break;*/
+            switch(currentState) // Switch changes states
+            {
+                case AIState.Chase:
+                    DoChaseState();
+                    currentState = AIState.Chase;
+                    // Check for transitions
+                    if (IsInLineOfSight(targetPlayer) && IsCanSee(targetPlayer) && IsDistanceLessThan(targetPlayer, 8/*change to variable after testing*/))
+                    {
+                        ChangeState(AIState.Attack);
+                    }
+                    else if (targetPlayer == null || !IsDistanceLessThan(targetPlayer, hearingDistance))
+                    {
+                        ChangeState(AIState.Patrol);
+                    }
+                    break;
 
-            case AIState.Enraged:
-                DoEnragedState();
-                currentState = AIState.Enraged;
-                if(health.currentHealth > healthToEnrage)
-                {
-                    ChangeState(AIState.Attack);
-                }
-                break;
+                case AIState.Attack:
+                    base.DoAttackState();
+                    currentState = AIState.Attack;
+                    if (health.currentHealth <= healthToEnrage)
+                    {
+                        ChangeState(AIState.Enraged);
+                    }
+                    else if (!IsInLineOfSight(targetPlayer))
+                    {
+                        ChangeState(AIState.Chase);
+                    }
+                    else if(!IsDistanceLessThan(targetPlayer, hearingDistance) || !IsCanSee(targetPlayer))
+                    {
+                        ChangeState(AIState.Patrol);
+                    }
+                    break;
+
+                case AIState.Enraged:
+                    DoEnragedState();
+                    currentState = AIState.Enraged;
+                    if(health.currentHealth > healthToEnrage)
+                    {
+                        ChangeState(AIState.Attack);
+                    }
+                    break;
+            }
+        }
+        else if (GameManager.instance.players != null)
+        {
+            TargetPlayerOne();
+        }
+        else if (GameManager.instance.players == null)
+        {
+            ChangeState(AIState.Patrol);
         }
 
     }
 
     public override void DoEnragedState()
     {
-        if (target != null)
+        if (targetPlayer != null)
         {
             Enrage();
             // Chase
-            Seek(target);
+            Seek(targetPlayer);
             // Shoot
             pawn.Shoot();
         }
-        else if (target = null)
+        else if (targetPlayer = null)
         {
             ChangeState(AIState.Patrol);
         }
