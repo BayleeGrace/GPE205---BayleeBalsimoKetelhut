@@ -132,6 +132,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81a6195598c99b446a6ae0a1d6ff395d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isMoving: 0
+  rotatingAudioSource: {fileID: 0}
+  tankRotateClip: {fileID: 0}
 --- !u!114 &2535482313733260803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,6 +153,7 @@ MonoBehaviour:
   fireRate: 3
   noiseMaker: {fileID: 0}
   noiseMakerVolume: 0
+  controller: {fileID: 0}
   shooter: {fileID: 6766521778717739339}
   tankShellPrefab: {fileID: 8063939962284642360, guid: 944d17993a4db48f4821cc89aa3436c9, type: 3}
   fireForce: 750
@@ -157,6 +161,7 @@ MonoBehaviour:
   lifespan: 1.5
   nextEventTime: 0
   timerDelay: 0
+  isPlayer: 0
 --- !u!114 &6766521778717739339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,6 +176,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firepointTransform: {fileID: 867495620187984873}
   tankShellPrefab: {fileID: 8063939962284642360, guid: 944d17993a4db48f4821cc89aa3436c9, type: 3}
+  shootAudioSource: {fileID: 0}
 --- !u!114 &3663038325855170466
 MonoBehaviour:
   m_ObjectHideFlags: 0

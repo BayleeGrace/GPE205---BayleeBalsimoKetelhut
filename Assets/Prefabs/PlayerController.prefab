@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1934622400197168731}
   - component: {fileID: 1934622400197168708}
+  - component: {fileID: 4841498811753225673}
   m_Layer: 0
   m_Name: PlayerController
   m_TagString: Untagged
@@ -50,3 +51,11 @@ MonoBehaviour:
   rotateCounterClockwiseKey: 97
   shootKey: 101
   pauseKey: 27
+--- !u!81 &4841498811753225673
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934622400197168709}
+  m_Enabled: 1

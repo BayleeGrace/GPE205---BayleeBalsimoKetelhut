@@ -8,6 +8,8 @@ public class TankMover : Mover
     // Variable to hold the Rigidbody Component
     private Rigidbody rb;
     private Transform tf;
+    public AudioSource rotatingAudioSource;
+    public AudioClip tankRotateClip;
 
     // Start is called before the first frame update
     public override void Start()
@@ -30,4 +32,12 @@ public class TankMover : Mover
         tf.Rotate(0, turnSpeed * Time.deltaTime, 0);
     }
 
+    public override void PlayRotateSound()
+    {
+        if (!rotatingAudioSource.isPlaying)
+        {
+            //AudioSource.PlayClipAtPoint(tankRotateClip, gameObject.transform.position);
+            rotatingAudioSource.PlayOneShot(tankRotateClip);
+        }
+    }
 }

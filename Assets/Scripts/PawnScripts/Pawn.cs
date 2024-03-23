@@ -11,8 +11,8 @@ public abstract class Pawn : MonoBehaviour
     public float fireRate;
     public NoiseMaker noiseMaker;
     public float noiseMakerVolume;
-    [HideInInspector]
-    public Controller controller;
+    [HideInInspector] public Controller controller;
+
 
     public virtual void Start() // Use virtual in case we might override Start in our child functions
     {

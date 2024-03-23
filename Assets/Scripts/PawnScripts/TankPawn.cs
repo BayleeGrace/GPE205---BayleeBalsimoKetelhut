@@ -19,14 +19,13 @@ public class TankPawn : Pawn
     [HideInInspector]
     public float timerDelay;
 
-    private bool isPlayer;
+    public bool isPlayer;
     
     // Start is called before the first frame update
     // Since we inherit from Pawn, we can remove Start and Update fx's. To be safe I will be telling it to run from the parent anyways.
     public override void Start()
     {
         base.Start();
-
         
         float secondsPerShot;
         if (fireRate <= 0)
@@ -39,33 +38,40 @@ public class TankPawn : Pawn
         }
         timerDelay = secondsPerShot;
         nextEventTime = Time.time + timerDelay;
-
     }
 
     // Update is called once per frame
-    public void FixedUpdate()
+    public void Update()
     {
         //CheckFireRate();
+        if ((mover.isMoving && isPlayer) == true)
+        {
+            mover.PlayRotateSound();
+        }
     }
 
     public override void MoveForward()
     {
         mover.Move(transform.forward, moveSpeed);
+        mover.isMoving = true;
     }
 
     public override void MoveBackward()
     {
         mover.Move(transform.forward, -moveSpeed);
+        mover.isMoving = true;
     }
 
     public override void RotateClockwise()
     {
         mover.Rotate(turnSpeed);
+        mover.isMoving = true;
     }
 
     public override void RotateCounterClockwise()
     {
         mover.Rotate(-turnSpeed);
+        mover.isMoving = true;
     }
 
     public override void Shoot()
@@ -100,6 +106,7 @@ public class TankPawn : Pawn
         if(noiseMaker != null)
         {
             noiseMaker.volumeDistance = 0;
+            mover.isMoving = false;
         }
     }
 

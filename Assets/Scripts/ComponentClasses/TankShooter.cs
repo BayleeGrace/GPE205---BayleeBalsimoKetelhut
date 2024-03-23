@@ -6,6 +6,7 @@ public class TankShooter : Shooter
 {
     public Transform firepointTransform;
     public GameObject tankShellPrefab;
+    public AudioSource shootAudioSource;
     
     // Start is called before the first frame update
     public override void Start()
@@ -23,6 +24,8 @@ public class TankShooter : Shooter
     {
         // Instantiate our projectile
         GameObject newShell = Instantiate(tankShellPrefab, firepointTransform.position, firepointTransform.rotation) as GameObject;
+        shootAudioSource.mute = false;
+        shootAudioSource.Play();
         // Grab the "DamageOnHit" component
         DamageOnHit damageOnHit = newShell.AddComponent<DamageOnHit>();
 
@@ -30,7 +33,6 @@ public class TankShooter : Shooter
         if (damageOnHit != null)
         {
             damageOnHit.damageDone = damageDone;
-
             damageOnHit.owner = GetComponent<Pawn>();
         }
 
@@ -42,6 +44,5 @@ public class TankShooter : Shooter
             rigidbody.AddForce(firepointTransform.forward * fireForce);
         }
         Destroy(newShell, lifespan);
-        
     }
 }

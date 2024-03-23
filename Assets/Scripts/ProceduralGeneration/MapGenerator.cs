@@ -23,6 +23,7 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] public int seedNumber;
     [SerializeField] private TMP_InputField inputSeed;
     private bool isSeedEntered;
+    public GameObject gamePlayGameObject;
     #endregion Seed Variables
 
     #endregion Variables
@@ -88,7 +89,7 @@ public class MapGenerator : MonoBehaviour
                 GameObject tempRoomObj = Instantiate(RandomRoomPrefab(), newPosition, Quaternion.identity) as GameObject; // typecasting the new room, "cast is technically redundant, not needed"
 
                 // set its parent
-                tempRoomObj.transform.parent = transform; // Sets the MapGenerator as the parent of these new rooms
+                tempRoomObj.transform.parent = gamePlayGameObject.transform; // Sets the MapGenerator as the parent of these new rooms
 
                 // give it a meaningful name
                 tempRoomObj.name = "Room_" + currentCol + "," + currentRow;

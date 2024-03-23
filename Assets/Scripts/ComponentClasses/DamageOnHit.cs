@@ -12,7 +12,7 @@ public class DamageOnHit : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -33,7 +33,6 @@ public class DamageOnHit : MonoBehaviour
             // Inflict Damage
             otherHealth.TakeDamage(damageDone, owner);
         }
-
         // Destroy object
         Destroy(gameObject);
     }

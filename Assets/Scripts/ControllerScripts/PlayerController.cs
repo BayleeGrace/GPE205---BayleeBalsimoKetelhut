@@ -9,6 +9,7 @@ public class PlayerController : Controller
     public KeyCode moveBackwardKey;
     public KeyCode rotateClockwiseKey;
     public KeyCode rotateCounterClockwiseKey;
+    private Mover mover;
 
     // variable for the shoot function
     public KeyCode shootKey;
@@ -68,7 +69,6 @@ public class PlayerController : Controller
         if (Input.GetKeyDown(shootKey))
         {
             pawn.Shoot();
-            pawn.MakeNoise();
         }
 
         if (!Input.GetKey(moveForwardKey) && !Input.GetKey(moveBackwardKey) && !Input.GetKey(rotateClockwiseKey) && !Input.GetKey(rotateCounterClockwiseKey) && !Input.GetKeyDown(shootKey))
