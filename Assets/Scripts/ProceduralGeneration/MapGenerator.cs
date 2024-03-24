@@ -17,26 +17,21 @@ public class MapGenerator : MonoBehaviour
     private Room[,] mapGrid;
 
     public List<PawnSpawnPoint> spawnPoints;
+    public GameObject generatedMapGameObject;
+    public GameObject newGeneratedMapGameObject;
 
     #region Seed Variables
     //private int[] noiseValues;
     [SerializeField] public int seedNumber;
     [SerializeField] private TMP_InputField inputSeed;
     private bool isSeedEntered;
-    public GameObject gamePlayGameObject;
     #endregion Seed Variables
 
     #endregion Variables
 
     public void Start()
     {
-        SetMap();
-
-        PawnSpawnPoint[] spawnPoint = FindObjectsOfType<PawnSpawnPoint>();
-        foreach (var spawn in spawnPoint)
-        {
-            spawnPoints.Add(spawn);
-        }
+        
     }
 
     #region Seed Generation
@@ -50,8 +45,14 @@ public class MapGenerator : MonoBehaviour
         {
             seedNumber = Random.Range(0,99999);
         }
-        // Starts the sequence of the random numbers...
         Random.InitState(seedNumber);
+        GenerateMap();
+
+        PawnSpawnPoint[] spawnPoint = FindObjectsOfType<PawnSpawnPoint>();
+        foreach (var spawn in spawnPoint)
+        {
+            spawnPoints.Add(spawn);
+        }
     }
 
     public void SetSeedByRandom()
@@ -69,6 +70,7 @@ public class MapGenerator : MonoBehaviour
     public void GenerateMap()
     {
         mapGrid = new Room[cols, rows];
+        newGeneratedMapGameObject = Instantiate(generatedMapGameObject, Vector3.zero, Quaternion.identity) as GameObject;
 
         //Spawn room tiles
         // Randomly select room tiles, one grid coordinate at a time
@@ -89,7 +91,7 @@ public class MapGenerator : MonoBehaviour
                 GameObject tempRoomObj = Instantiate(RandomRoomPrefab(), newPosition, Quaternion.identity) as GameObject; // typecasting the new room, "cast is technically redundant, not needed"
 
                 // set its parent
-                tempRoomObj.transform.parent = gamePlayGameObject.transform; // Sets the MapGenerator as the parent of these new rooms
+                tempRoomObj.transform.parent = newGeneratedMapGameObject.transform; // Sets the MapGenerator as the parent of these new rooms
 
                 // give it a meaningful name
                 tempRoomObj.name = "Room_" + currentCol + "," + currentRow;

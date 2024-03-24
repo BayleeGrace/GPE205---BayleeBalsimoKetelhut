@@ -10,13 +10,13 @@ public class GameManager : MonoBehaviour
     public GameObject playerSpawnTransform; // Variable to hold the player spawn location
     public bool isPlayerSpawned = false; // Boolean to check if the player was spawned, may need to be changed later to allow for multiplayer
     public GameObject cameraPrefab;
+    [HideInInspector] public GameObject newCamera;
     public CameraController cameraControllerPrefab;
     public GameObject[] enemyControllerPrefabs; // Variable to reference the AI controllers and their pawns
     //public GameObject enemyPawnPrefab; **Not used d/t controller being contained within enemy prefab, may need to be used later!**
     private PawnSpawnPoint currentSpawnPoint; // Variable to hold the current spawn location 
     private List<Transform> currentPatrolWaypoints;
     public MapGenerator mapGenerator; // Variable to reference the Map Generator
-    private bool mapIsSpawned = false;
     public static GameManager instance; // Variable to reference the GameManager
     public List<PlayerController> players; // Creates a LIST of players, even if the game is going to be single player
     public List<AIController> enemies; // Creates a LIST of enemies based on how many AIControllers that were spawned in the scene
@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
     public GameObject GameplayStateObject; // Gameplay STATE!
     public GameObject GameOverScreenStateObject; // Game Over Screen STATE
     public GameObject PauseMenuSceenStateObject;
+    private bool gameplayIsDeactivated = true;
+    private GameObject currentMap;
     #endregion Game States;
     
     private void Awake()
@@ -50,7 +52,7 @@ public class GameManager : MonoBehaviour
     
     private void Start()
     {
-        DetermineSpawnPoints();
+        
     }
 
     // Spawn the Player Controller at x, y, x, with no rotation
@@ -75,16 +77,14 @@ public class GameManager : MonoBehaviour
 
         isPlayerSpawned = true;
         SpawnPlayerCamera();
-
     }
 
     public void SpawnPlayerCamera()
     {
         foreach (var player in players)
         {
-            GameObject newCamera = Instantiate(cameraPrefab, player.pawn.transform.position, Quaternion.identity) as GameObject;
-
-            cameraPrefab = newCamera;
+            newCamera = Instantiate(cameraPrefab, player.pawn.transform.position, Quaternion.identity) as GameObject;
+            cameraControllerPrefab.playerCamera = newCamera;
         }
     }
 
@@ -156,7 +156,24 @@ public class GameManager : MonoBehaviour
 
     private void DeactiveGameplayState()
     {
+        gameplayIsDeactivated = true;
         GameplayStateObject.SetActive(false);
+        Destroy(currentMap);
+        foreach (var player in players)
+        {
+            Destroy(player.pawn.gameObject);
+            Destroy(player.gameObject);
+            isPlayerSpawned = false;
+            Destroy(newCamera);
+        }
+
+        foreach (var enemy in enemies)
+        {
+            if (enemy != null)
+            {
+            Destroy(enemy.transform.parent.gameObject);
+            }
+        }
     }
 
     public void DeactivatePauseMenuState()
@@ -172,6 +189,7 @@ public class GameManager : MonoBehaviour
         // Deactivate all states
         DeactivateAllStates();
         DeactiveGameplayState();
+        DeactivatePauseMenuState();
         // Activate the title screen
         TitleScreenStateObject.SetActive(true); // Set activate activates that object
     }
@@ -181,6 +199,7 @@ public class GameManager : MonoBehaviour
         // Deactivate all states
         DeactivateAllStates();
         DeactiveGameplayState();
+        DeactivatePauseMenuState();
         // Activate the title screen
         MainMenuStateObject.SetActive(true); // Set activate activates that object
     }
@@ -208,40 +227,19 @@ public class GameManager : MonoBehaviour
         DeactivateAllStates();
         DeactivatePauseMenuState();
         // Activate the title screen
-        GameplayStateObject.SetActive(true); // Set activate activates that object
 
         // Generate NEW map if the Map Generator exists
         if (mapGenerator != null)
         {
-            int currentSeed = mapGenerator.seedNumber;
-            if (mapIsSpawned == false)
+            if (gameplayIsDeactivated == true)
             {
-                // Generate a new map
-                mapGenerator.GenerateMap();
-                mapIsSpawned = true;
-            }
-            else if (mapIsSpawned == true)
-            {
-                // Add all spawned rooms to an array
-                Room[] currentRooms = FindObjectsOfType<Room>();
-                // Hide all rooms that currently exist
-                foreach (var room in currentRooms)
-                {
-                    room.gameObject.SetActive(false);
-                }
-                // Generate a new map
-                mapGenerator.GenerateMap();
+                GameplayStateObject.SetActive(true); // Set activate activates that object
                 mapGenerator.SetMap();
-                foreach (var room in currentRooms)
-                {
-                    Destroy(room.gameObject);
-                }
+                currentMap = mapGenerator.newGeneratedMapGameObject;
+                DetermineSpawnPoints();
+                gameplayIsDeactivated = true;
             }
         }
-
-        // Determine Spawn points, which spawns the players AND the enemies
-        DetermineSpawnPoints();
-
     }
 
     public void ActivateGameOverScreen()

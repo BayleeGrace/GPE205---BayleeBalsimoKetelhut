@@ -15,6 +15,7 @@ public class PlayerController : Controller
     public KeyCode shootKey;
     // Variable to hold the pause game fx
     public KeyCode pauseKey;
+    [HideInInspector] public GameObject playerCamera;
 
     // Start is called before the first frame update
     public void Awake()

@@ -23,7 +23,7 @@ public class PickupSpawner : MonoBehaviour
             if (Time.time > nextSpawnTime)
             {
                 spawnedPickup = Instantiate(pickupPrefab, transform.position, Quaternion.identity);
-                spawnedPickup.transform.parent = GameManager.instance.mapGenerator.gamePlayGameObject.transform;
+                spawnedPickup.transform.parent = GameManager.instance.mapGenerator.newGeneratedMapGameObject.transform;
                 nextSpawnTime = Time.time + spawnDelay;
             }
         }
