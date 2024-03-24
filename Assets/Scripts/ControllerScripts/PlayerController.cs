@@ -16,6 +16,8 @@ public class PlayerController : Controller
     // Variable to hold the pause game fx
     public KeyCode pauseKey;
     [HideInInspector] public GameObject playerCamera;
+    //public int scoreToAdd;
+    public int playerScore;
 
     // Start is called before the first frame update
     public void Awake()
@@ -93,6 +95,12 @@ public class PlayerController : Controller
             // Deregister with the Game Manager
             GameManager.instance.players.Remove(this);
         }
+    }
+
+    public override void AddToScore(int scoreToAdd)
+    {
+        playerScore = playerScore + scoreToAdd;
+        Debug.Log("New score for " + pawn + " is " + playerScore);
     }
 
 }

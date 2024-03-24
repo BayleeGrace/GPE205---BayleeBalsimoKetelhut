@@ -22,6 +22,14 @@ public class GameManager : MonoBehaviour
     public List<AIController> enemies; // Creates a LIST of enemies based on how many AIControllers that were spawned in the scene
     #endregion Variables;
 
+    #region Score;
+    public int highScore;
+    public int[] playerScores;
+    //public int player2Score = 0;
+    //public int player3Score = 0;
+    //public int player4Score = 0;
+    #endregion Score;
+
     #region Game States;
     public GameObject TitleScreenStateObject; // Title Screen STATE
     public GameObject MainMenuStateObject; // Main Menu Screen STATE
@@ -272,5 +280,33 @@ public class GameManager : MonoBehaviour
     #endregion Game State Activators;
 
     #endregion Game States;
-    
+
+    // TODO Create a function that resets the score for all players
+    public void ResetScores()
+    {
+        foreach (var player in players)
+        {
+            player.playerScore = 0;
+        }
+    }
+    // TODO Create a function that compares all score values in the scene and 
+    public void CompareScoreValues()
+    {
+        int currentScore = playerScores[0];
+        foreach (var scoreInt in playerScores)
+        {
+            if (scoreInt > 0)
+            {
+                if (currentScore < scoreInt)
+                {
+                    highScore = scoreInt;
+                }
+                else if (currentScore > scoreInt)
+                {
+                    highScore = currentScore;
+                }
+            }
+        }
+        Debug.Log("High score is " + highScore);
+    }
 }

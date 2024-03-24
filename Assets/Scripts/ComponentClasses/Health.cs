@@ -11,6 +11,7 @@ public class Health : MonoBehaviour
     public float maxHealth = 100;
     public float currentHealth;
     public bool canOverheal;
+    public GameObject scorePickup;
     #endregion Variables
 
     // Start is called before the first frame update
@@ -55,6 +56,7 @@ public class Health : MonoBehaviour
 
     public void Die(Pawn source) // parameter - input to a method
     {
+        GameObject newScorePickup = Instantiate(scorePickup, transform.position, Quaternion.identity) as GameObject;
         Destroy(gameObject);
         // source.name takes the "Pawn source" (owner of this component) and collects its name
     }

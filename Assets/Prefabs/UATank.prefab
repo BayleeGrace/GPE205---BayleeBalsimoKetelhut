@@ -194,6 +194,7 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   canOverheal: 1
+  scorePickup: {fileID: 6966661645644902191, guid: 5c28c38d89bd045498459d6f75c2a841, type: 3}
 --- !u!114 &1831407855965853665
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -78,8 +78,8 @@ public class TankPawn : Pawn
     {
         if (Time.time >= nextEventTime)
         {
-        shooter.Shoot(tankShellPrefab, fireForce, damageDone, lifespan);
-        nextEventTime = Time.time + timerDelay;
+            shooter.Shoot(tankShellPrefab, fireForce, damageDone, lifespan);
+            nextEventTime = Time.time + timerDelay;
         }
     }
 

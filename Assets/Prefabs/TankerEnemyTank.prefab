@@ -55,8 +55,8 @@ MonoBehaviour:
   lastHit: {fileID: 0}
   collision: {x: 0, y: 0, z: 0}
   healthToEnrage: 45
-  enragedMoveSpeed: 5.7
-  enragedFireRate: 3.5
+  enragedMoveSpeed: 7
+  enragedFireRate: 5
 --- !u!1001 &436698284123362246
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -152,6 +152,10 @@ PrefabInstance:
       propertyPath: maxHealth
       value: 150
       objectReference: {fileID: 0}
+    - target: {fileID: 3663038325855170466, guid: 15ef9dfc83f9144c5b6c35c5026053a9, type: 3}
+      propertyPath: scorePickup
+      value: 
+      objectReference: {fileID: 6966661645644902191, guid: 5c28c38d89bd045498459d6f75c2a841, type: 3}
     - target: {fileID: 3663038325855170466, guid: 15ef9dfc83f9144c5b6c35c5026053a9, type: 3}
       propertyPath: currentHealth
       value: 150

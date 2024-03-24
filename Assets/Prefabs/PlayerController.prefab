@@ -51,6 +51,9 @@ MonoBehaviour:
   rotateCounterClockwiseKey: 97
   shootKey: 101
   pauseKey: 27
+  playerCamera: {fileID: 0}
+  scoreToAdd: 100
+  playerScore: 0
 --- !u!81 &4841498811753225673
 AudioListener:
   m_ObjectHideFlags: 0

@@ -33,7 +33,7 @@ public class TankShooter : Shooter
         if (damageOnHit != null)
         {
             damageOnHit.damageDone = damageDone;
-            damageOnHit.owner = GetComponent<Pawn>();
+            damageOnHit.owner = GetComponent<Pawn>(); // this is the pawn that shot the projectile
         }
 
         // Get the rigidbody component

@@ -51,10 +51,6 @@ public class TankerAIController : AIController
                     {
                         ChangeState(AIState.Enraged);
                     }
-                    else if (!IsInLineOfSight(targetPlayer))
-                    {
-                        ChangeState(AIState.Chase);
-                    }
                     else if(!IsDistanceLessThan(targetPlayer, hearingDistance) || !IsCanSee(targetPlayer))
                     {
                         ChangeState(AIState.Patrol);
