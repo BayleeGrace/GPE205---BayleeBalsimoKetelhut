@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     public GameObject GameplayStateObject; // Gameplay STATE!
     public GameObject GameOverScreenStateObject; // Game Over Screen STATE
     public GameObject PauseMenuSceenStateObject;
+    public GameObject PauseMenuOptionsScreenStateObject;
     private bool gameplayIsDeactivated = true;
     private GameObject currentMap;
     #endregion Game States;
@@ -152,6 +153,7 @@ public class GameManager : MonoBehaviour
         //GameplayStateObject.SetActive(false);
         GameOverScreenStateObject.SetActive(false);
         PauseMenuSceenStateObject.SetActive(false);
+        PauseMenuOptionsScreenStateObject.SetActive(false);
     }
 
     private void DeactiveGameplayState()
@@ -252,6 +254,14 @@ public class GameManager : MonoBehaviour
     }
 
     public void ActivatePauseMenuScreen()
+    {
+        // Deactivate all states
+        DeactivateAllStates();
+        // Activate the pause menu screen
+        PauseMenuSceenStateObject.SetActive(true);
+    }
+
+    public void ActivatePauseMenuOptionsScreen()
     {
         // Deactivate all states
         DeactivateAllStates();

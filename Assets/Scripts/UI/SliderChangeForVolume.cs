@@ -1,18 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class SliderChangeForVolume : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public AudioMixer audioMixer;
 
-    // Update is called once per frame
-    void Update()
+    public void OnSliderChange()
     {
-        
+        audioMixer.SetFloat("mainVolume", 20.0f); // Set the volume to 20db
     }
 }
