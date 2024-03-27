@@ -55,6 +55,10 @@ public class TankerAIController : AIController
                     {
                         ChangeState(AIState.Patrol);
                     }
+                    else if (targetPlayer == null)
+                    {
+                        ChangeState(AIState.Patrol);
+                    }
                     break;
 
                 case AIState.Enraged:
@@ -63,6 +67,10 @@ public class TankerAIController : AIController
                     if(health.currentHealth > healthToEnrage)
                     {
                         ChangeState(AIState.Attack);
+                    }
+                    else if (targetPlayer == null)
+                    {
+                        ChangeState(AIState.Patrol);
                     }
                     break;
             }

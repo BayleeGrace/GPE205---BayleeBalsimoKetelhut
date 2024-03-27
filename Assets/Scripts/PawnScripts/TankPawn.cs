@@ -41,7 +41,7 @@ public class TankPawn : Pawn
     }
 
     // Update is called once per frame
-    public void Update()
+    public void FixedUpdate()
     {
         //CheckFireRate();
         if ((mover.isMoving && isPlayer) == true)

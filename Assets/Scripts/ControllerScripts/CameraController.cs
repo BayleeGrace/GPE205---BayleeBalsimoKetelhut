@@ -15,18 +15,8 @@ public class CameraController : MonoBehaviour
     }
     public void FixedUpdate()
     {
+            FindPlayer();
 
-        if (GameManager.instance != null)
-        {
-            if (GameManager.instance.players != null)
-            {
-                foreach (var player in GameManager.instance.players)
-                {
-                    targetPlayer = player.pawn.gameObject;
-                    playerCamera = GameManager.instance.newCamera;
-                }
-            }
-        }
             targetTransform = targetPlayer.transform;
 
             if (playerCamera != null)
@@ -35,5 +25,20 @@ public class CameraController : MonoBehaviour
                 playerCamera.transform.position = targetPlayer.transform.position + offset;
                 //playerCamera.transform.rotation = Quaternion.Euler(Vector3.zero);
             }
+    }
+
+    public void FindPlayer()
+    {
+        if (GameManager.instance != null)
+        {
+                if (GameManager.instance.players != null)
+                {
+                    foreach (var player in GameManager.instance.players)
+                    {
+                        targetPlayer = player.pawn.gameObject;
+                        playerCamera = GameManager.instance.newCamera;
+                    }
+                }
+        }
     }
 }

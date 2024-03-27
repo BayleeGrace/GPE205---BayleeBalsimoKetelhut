@@ -44,7 +44,7 @@ public class FleeingAIController : AIController
                     if(IsCanHear(targetPlayer) || IsCanSee(targetPlayer) || (IsCanHear(targetPlayer) && IsCanSee(targetPlayer)))  
                     {
                         ChangeState(AIState.Flee);
-                    }     
+                    }
                     break;
 
                 case AIState.Flee:

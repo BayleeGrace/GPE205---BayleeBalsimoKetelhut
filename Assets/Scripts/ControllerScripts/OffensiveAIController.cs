@@ -69,6 +69,10 @@ public class OffensiveAIController : AIController
                     {
                         ChangeState(AIState.Patrol);
                     }
+                    else if (targetPlayer == null)
+                    {
+                        ChangeState(AIState.Patrol);
+                    }
                     break;
 
             }

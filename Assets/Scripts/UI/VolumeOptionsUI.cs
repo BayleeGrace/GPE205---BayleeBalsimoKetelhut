@@ -53,7 +53,7 @@ public class VolumeOptionsUI : MonoBehaviour
         mainAudioMixer.SetFloat("SFXVolume", newVolume);
     }
 
-        public void OnMusicVolumeChange()
+    public void OnMusicVolumeChange()
     {
         float newVolume = musicAudioSlider.value;
         if (newVolume <= 0)

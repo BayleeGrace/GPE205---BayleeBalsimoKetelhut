@@ -48,7 +48,11 @@ public class RatAIController : AIController
                     if(!IsDistanceLessThan(targetPlayer, 7))   
                     {
                         ChangeState(AIState.Flee);
-                    }            
+                    }
+                    else if (targetPlayer == null)
+                    {
+                        ChangeState(AIState.Patrol);
+                    }     
                     break;
 
                 case AIState.Flee:
@@ -62,6 +66,10 @@ public class RatAIController : AIController
                     else if (!IsDistanceLessThan(targetPlayer, fleeDistance))
                     {
                         ChangeState(AIState.Hide);
+                    }
+                    else if (targetPlayer == null)
+                    {
+                        ChangeState(AIState.Patrol);
                     }
                     break;
             }

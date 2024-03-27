@@ -431,7 +431,7 @@ public abstract class AIController : Controller
         if(GameManager.instance != null)
         {
             // And there are existing players
-            if(GameManager.instance.players.Count > 0)
+            if(GameManager.instance.players.Count >= 0)
             {
                     //then targetPlayer the first player controller in the Game instance
                     targetPlayer = GameManager.instance.players[0].pawn.gameObject;
