@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     public CameraController cameraControllerPrefab;
     public GameObject[] enemyControllerPrefabs; // Variable to reference the AI controllers and their pawns
     //public GameObject enemyPawnPrefab; **Not used d/t controller being contained within enemy prefab, may need to be used later!**
-    private PawnSpawnPoint currentSpawnPoint; // Variable to hold the current spawn location 
+    [HideInInspector] public PawnSpawnPoint currentSpawnPoint; // Variable to hold the current spawn location 
     private List<Transform> currentPatrolWaypoints;
     public MapGenerator mapGenerator; // Variable to reference the Map Generator
     public static GameManager instance; // Variable to reference the GameManager
@@ -22,13 +22,16 @@ public class GameManager : MonoBehaviour
     public List<AIController> enemies; // Creates a LIST of enemies based on how many AIControllers that were spawned in the scene
     #endregion Variables;
 
-    #region Score;
+    //[HideInInspector] public PawnSpawnPoint randomPlayerSpawnPoint;
+    //private bool camerasAreSpawned = false;
+
+    #region Score
     public int highScore;
     public int[] playerScores;
     //public int player2Score = 0;
     //public int player3Score = 0;
     //public int player4Score = 0;
-    #endregion Score;
+    #endregion Score
 
     #region Game States;
     public GameObject TitleScreenStateObject; // Title Screen STATE
@@ -85,16 +88,14 @@ public class GameManager : MonoBehaviour
         newPlayerPawn.controller = newPlayerController;
 
         isPlayerSpawned = true;
-        SpawnPlayerCamera();
+        //SpawnPlayerCamera();
     }
 
-    public void SpawnPlayerCamera()
+    public void SpawnPlayerCamera(Controller player)
     {
-        foreach (var player in players)
-        {
-            newCamera = Instantiate(cameraPrefab, player.pawn.transform.position, Quaternion.identity) as GameObject;
-            cameraControllerPrefab.playerCamera = newCamera;
-        }
+        newCamera = Instantiate(cameraPrefab, player.pawn.transform.position, Quaternion.identity) as GameObject;
+        cameraControllerPrefab.playerCamera = newCamera;
+        cameraControllerPrefab.targetPlayer = player.gameObject;
     }
 
     public void SpawnEnemy()
@@ -143,6 +144,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void OnPlayerDeath(Pawn player)
+    {
+        //Destroy(newCamera);
+        SpawnPlayer(currentSpawnPoint);
+        SpawnPlayerCamera(player.controller);
+        //cameraControllerPrefab.targetPlayer = player.gameObject;
+    }
+
     public GameObject RandomEnemyPrefab()
     {
         // pull random enemy obj's from the allotted array created by designers
@@ -181,7 +190,7 @@ public class GameManager : MonoBehaviour
         {
             if (enemy != null)
             {
-            Destroy(enemy.transform.parent.gameObject);
+                Destroy(enemy.transform.parent.gameObject);
             }
         }
     }
@@ -247,7 +256,14 @@ public class GameManager : MonoBehaviour
                 mapGenerator.SetMap();
                 currentMap = mapGenerator.newGeneratedMapGameObject;
                 DetermineSpawnPoints();
-                gameplayIsDeactivated = true;
+                //camerasAreSpawned = false;
+                foreach (var player in players)
+                {
+                    SpawnPlayerCamera(player);
+                }
+                ResetScores();
+                ResetLives();
+                gameplayIsDeactivated = false;
             }
         }
     }
@@ -259,6 +275,7 @@ public class GameManager : MonoBehaviour
         DeactiveGameplayState();
         // Activate the title screen
         GameOverScreenStateObject.SetActive(true); // Set activate activates that object
+        // TODO: Set highScore and other scores in results
     }
 
     public void ActivatePauseMenuScreen()
@@ -273,14 +290,16 @@ public class GameManager : MonoBehaviour
     {
         // Deactivate all states
         DeactivateAllStates();
+        DeactivatePauseMenuState();
         // Activate the pause menu screen
-        PauseMenuSceenStateObject.SetActive(true);
+        PauseMenuOptionsScreenStateObject.SetActive(true);
     }
 
     #endregion Game State Activators;
 
-    #endregion Game States;
+    #endregion Game State;
 
+    #region Score
     // TODO Create a function that resets the score for all players
     public void ResetScores()
     {
@@ -289,7 +308,8 @@ public class GameManager : MonoBehaviour
             player.playerScore = 0;
         }
     }
-    // TODO Create a function that compares all score values in the scene and 
+
+    // TODO Create a function that compares all score values in the scene
     public void CompareScoreValues()
     {
         int currentScore = playerScores[0];
@@ -309,4 +329,19 @@ public class GameManager : MonoBehaviour
         }
         Debug.Log("High score is " + highScore);
     }
+
+    #endregion Score
+
+    #region Lives
+
+    public void ResetLives()
+    {
+        // TODO create a function that resets the lives variable for each player
+        foreach (var player in players)
+        {
+            player.pawn.currentLives = player.pawn.maxLives;
+        }
+    }
+
+    #endregion Lives
 }

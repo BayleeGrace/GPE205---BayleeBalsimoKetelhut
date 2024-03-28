@@ -12,6 +12,11 @@ public abstract class Pawn : MonoBehaviour
     public NoiseMaker noiseMaker;
     public float noiseMakerVolume;
     [HideInInspector] public Controller controller;
+    public bool isPlayer;
+    #region Lives Variables
+    public int currentLives;
+    public int maxLives = 3;
+    #endregion Lives Variables
 
 
     public virtual void Start() // Use virtual in case we might override Start in our child functions

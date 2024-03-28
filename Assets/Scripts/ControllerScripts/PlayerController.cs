@@ -92,7 +92,6 @@ public class PlayerController : Controller
         // Instance tracking the destroyed player
         if (GameManager.instance.players != null)
         {
-            // Deregister with the Game Manager
             GameManager.instance.players.Remove(this);
         }
     }

@@ -7,6 +7,9 @@ public class PowerupManager : MonoBehaviour
     public List<Powerup> powerups;
     public List<Powerup> removedPowerupQueue;
 
+    public AudioSource powerupAudioSource;
+    public AudioClip powerupAudioClip;
+
     void Start()
     {
         //always make sure you initalize a list (below)
@@ -31,6 +34,7 @@ public class PowerupManager : MonoBehaviour
         powerupToAdd.Apply(this);
 
         powerups.Add(powerupToAdd);
+        PlayPowerupSound();
     }
 
     public void Remove(Powerup powerupToRemove)
@@ -63,5 +67,19 @@ public class PowerupManager : MonoBehaviour
             Debug.Log("Powerup " + powerup + " removed.");
         }
         removedPowerupQueue.Clear();
+    }
+
+    public void PlayPowerupSound()
+    {
+        if (!powerupAudioSource.isPlaying)
+        {
+            TankPawn owner = gameObject.GetComponent<TankPawn>();
+
+            if (owner.isPlayer == true) // Only if the pawn that collected the object is a player...
+            {
+                //AudioSource.PlayClipAtPoint(tankRotateClip, gameObject.transform.position);
+                powerupAudioSource.PlayOneShot(powerupAudioClip);
+            }
+        }
     }
 }

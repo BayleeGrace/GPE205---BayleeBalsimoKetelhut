@@ -18,8 +18,6 @@ public class TankPawn : Pawn
     public float nextEventTime;
     [HideInInspector]
     public float timerDelay;
-
-    public bool isPlayer;
     
     // Start is called before the first frame update
     // Since we inherit from Pawn, we can remove Start and Update fx's. To be safe I will be telling it to run from the parent anyways.

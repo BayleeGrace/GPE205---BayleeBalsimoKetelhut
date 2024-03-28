@@ -31,14 +31,14 @@ public class CameraController : MonoBehaviour
     {
         if (GameManager.instance != null)
         {
-                if (GameManager.instance.players != null)
+            if (GameManager.instance.players != null)
+            {
+                foreach (var player in GameManager.instance.players)
                 {
-                    foreach (var player in GameManager.instance.players)
-                    {
-                        targetPlayer = player.pawn.gameObject;
-                        playerCamera = GameManager.instance.newCamera;
-                    }
+                    targetPlayer = player.pawn.gameObject;
+                    playerCamera = GameManager.instance.newCamera;
                 }
+            }
         }
     }
 }

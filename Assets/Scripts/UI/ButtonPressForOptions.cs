@@ -56,4 +56,5 @@ public class ButtonPressForOptions : MonoBehaviour
             GameManager.instance.ActivateMainMenuScreen();
         }
     }
+
 }

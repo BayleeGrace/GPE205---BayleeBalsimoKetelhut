@@ -13,30 +13,49 @@ public class Health : MonoBehaviour
     public bool canOverheal;
     public GameObject scorePickup;
     #endregion Variables
+    #region Sound variables
+    public AudioSource damageTakenAudioSource;
+    public AudioClip damageTakenAudioClip;
+    #endregion Sound variables
 
     // Start is called before the first frame update
     private void Start()
     {
         // Sets the currentHealth to maxHealth upon game? start
         currentHealth = maxHealth;
-    }
 
-    // Update is called once per frame
-    private void Update()
-    {
-        
     }
 
     // Specify in TakeDamage that you'll be subtracting an amount FROM the Pawn class that's owning the Health component
     public void TakeDamage(float amount, Pawn source)
     {
+        PlayTakeDamageSound();
         // This means the same as saying "currentHealth = currentHealth - amount;
         currentHealth -= amount;
         // Test code, this will convert all variables to a string for the Debug Log
         if(currentHealth <= 0)
         {
-            // The source (Pawn source, the owner of this component) dies (see below)
-            Die(source); // argument - the actual value passed into a method call
+
+            Pawn pawn = gameObject.GetComponent<Pawn>();
+
+            if (pawn.isPlayer == true)
+            {
+                pawn.currentLives -= 1;
+                Debug.Log("Player lives " + "= " + pawn.currentLives);
+                if (pawn.currentLives <= 0)
+                {
+                    GameManager.instance.ActivateGameOverScreen();
+                }
+                else 
+                {
+                    GameManager.instance.OnPlayerDeath(pawn);
+                }
+                Die(source);
+            }
+            else if (pawn.isPlayer == false)
+            {
+                Die(source);
+            }
         }
     }
 
@@ -59,5 +78,13 @@ public class Health : MonoBehaviour
         GameObject newScorePickup = Instantiate(scorePickup, transform.position, Quaternion.identity) as GameObject;
         Destroy(gameObject);
         // source.name takes the "Pawn source" (owner of this component) and collects its name
+    }
+
+    public void PlayTakeDamageSound()
+    {
+        if (!damageTakenAudioSource.isPlaying)
+        {
+            damageTakenAudioSource.PlayOneShot(damageTakenAudioClip);
+        }
     }
 }
