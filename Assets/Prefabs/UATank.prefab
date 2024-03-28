@@ -159,6 +159,7 @@ MonoBehaviour:
   noiseMakerVolume: 0
   controller: {fileID: 0}
   isPlayer: 1
+  playerCamera: {fileID: 0}
   currentLives: 0
   maxLives: 3
   shooter: {fileID: 6766521778717739339}

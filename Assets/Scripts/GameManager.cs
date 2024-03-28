@@ -9,9 +9,6 @@ public class GameManager : MonoBehaviour
     public GameObject tankPawnPrefab; // Variable to store the player's tankPawn
     public GameObject playerSpawnTransform; // Variable to hold the player spawn location
     public bool isPlayerSpawned = false; // Boolean to check if the player was spawned, may need to be changed later to allow for multiplayer
-    public GameObject cameraPrefab;
-    [HideInInspector] public GameObject newCamera;
-    public CameraController cameraControllerPrefab;
     public GameObject[] enemyControllerPrefabs; // Variable to reference the AI controllers and their pawns
     //public GameObject enemyPawnPrefab; **Not used d/t controller being contained within enemy prefab, may need to be used later!**
     [HideInInspector] public PawnSpawnPoint currentSpawnPoint; // Variable to hold the current spawn location 
@@ -21,9 +18,13 @@ public class GameManager : MonoBehaviour
     public List<PlayerController> players; // Creates a LIST of players, even if the game is going to be single player
     public List<AIController> enemies; // Creates a LIST of enemies based on how many AIControllers that were spawned in the scene
     #endregion Variables;
-
-    //[HideInInspector] public PawnSpawnPoint randomPlayerSpawnPoint;
-    //private bool camerasAreSpawned = false;
+    #region Cameras
+    public GameObject cameraPrefab;
+    //[HideInInspector] public GameObject newCamera;
+    public CameraController cameraControllerPrefab;
+    private bool camerasAreSpawned = false;
+    [HideInInspector] public List<GameObject> playerCameras;
+    #endregion Cameras
 
     #region Score
     public int highScore;
@@ -88,14 +89,27 @@ public class GameManager : MonoBehaviour
         newPlayerPawn.controller = newPlayerController;
 
         isPlayerSpawned = true;
-        //SpawnPlayerCamera();
+        SpawnPlayerCameras();
     }
 
-    public void SpawnPlayerCamera(Controller player)
+    public void SpawnPlayerCameras()
     {
-        newCamera = Instantiate(cameraPrefab, player.pawn.transform.position, Quaternion.identity) as GameObject;
-        cameraControllerPrefab.playerCamera = newCamera;
-        cameraControllerPrefab.targetPlayer = player.gameObject;
+        if (camerasAreSpawned == false)
+        {
+            foreach (var player in players)
+            {
+                GameObject newCamera = Instantiate(cameraPrefab, player.pawn.transform.position, Quaternion.identity) as GameObject;
+                CameraController newCameraController = newCamera.AddComponent<CameraController>();
+                newCameraController.targetPlayer = player.gameObject;
+                newCameraController.playerCamera = newCamera;
+                //cameraControllerPrefab.FindPlayer();
+                foreach (var camera in playerCameras)
+                {
+                    player.pawn.playerCamera = camera;
+                }
+            }
+        }
+        camerasAreSpawned = true;
     }
 
     public void SpawnEnemy()
@@ -146,10 +160,9 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayerDeath(Pawn player)
     {
-        //Destroy(newCamera);
+        Destroy(player.camera);
+        //camerasAreSpawned = false;
         SpawnPlayer(currentSpawnPoint);
-        SpawnPlayerCamera(player.controller);
-        //cameraControllerPrefab.targetPlayer = player.gameObject;
     }
 
     public GameObject RandomEnemyPrefab()
@@ -183,7 +196,10 @@ public class GameManager : MonoBehaviour
             Destroy(player.pawn.gameObject);
             Destroy(player.gameObject);
             isPlayerSpawned = false;
-            Destroy(newCamera);
+            foreach (var camera in playerCameras)
+            {
+                Destroy(camera);
+            }
         }
 
         foreach (var enemy in enemies)
@@ -256,11 +272,8 @@ public class GameManager : MonoBehaviour
                 mapGenerator.SetMap();
                 currentMap = mapGenerator.newGeneratedMapGameObject;
                 DetermineSpawnPoints();
-                //camerasAreSpawned = false;
-                foreach (var player in players)
-                {
-                    SpawnPlayerCamera(player);
-                }
+                camerasAreSpawned = false;
+                SpawnPlayerCameras();
                 ResetScores();
                 ResetLives();
                 gameplayIsDeactivated = false;

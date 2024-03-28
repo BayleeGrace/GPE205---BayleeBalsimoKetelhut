@@ -13,6 +13,7 @@ public abstract class Pawn : MonoBehaviour
     public float noiseMakerVolume;
     [HideInInspector] public Controller controller;
     public bool isPlayer;
+    [HideInInspector] public GameObject playerCamera;
     #region Lives Variables
     public int currentLives;
     public int maxLives = 3;

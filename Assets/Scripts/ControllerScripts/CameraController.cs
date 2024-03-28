@@ -11,11 +11,11 @@ public class CameraController : MonoBehaviour
     
     public void Start()
     {
-
+        GameManager.instance.playerCameras.Add(this.gameObject);
+        FindPlayer();
     }
     public void FixedUpdate()
     {
-            FindPlayer();
 
             targetTransform = targetPlayer.transform;
 
@@ -36,9 +36,15 @@ public class CameraController : MonoBehaviour
                 foreach (var player in GameManager.instance.players)
                 {
                     targetPlayer = player.pawn.gameObject;
-                    playerCamera = GameManager.instance.newCamera;
+                    //playerCamera = GameManager.instance.newCamera;
                 }
             }
         }
     }
+
+    public void OnDestroy()
+    {
+        GameManager.instance.playerCameras.Remove(this.gameObject);
+    }
+
 }
