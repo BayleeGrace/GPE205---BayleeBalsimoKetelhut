@@ -45,7 +45,6 @@ public abstract class AIController : Controller
             GameManager.instance.enemies.Add(this);
         }
         
-        TargetPlayerOne();
         currentState = AIState.Patrol;
         ChangeState(AIState.Patrol);
         base.Start();
@@ -61,7 +60,7 @@ public abstract class AIController : Controller
 
     public override void ProcessInputs() // this is overriding the Controller "ProcessInputs()"
     {
-        if(IsHasTarget())
+        if(IsHasTarget() == true)
         {
             #region State Transitions;
             switch(currentState) // Switch changes the enum based on the current state given
@@ -99,11 +98,11 @@ public abstract class AIController : Controller
             }
             #endregion State Transitions;
         }
-        else if (GameManager.instance.players != null)
+        else if ((GameManager.instance.players.Count > 0) || IsHasTarget() == false)
         {
             TargetPlayerOne();
         }
-        else if (GameManager.instance.players == null)
+        else
         {
             ChangeState(AIState.Patrol);
         }
@@ -430,14 +429,23 @@ public abstract class AIController : Controller
         // If the GameManager exists
         if(GameManager.instance != null)
         {
-            // And there are existing players
-            if(GameManager.instance.players.Count >= 0)
+            if (GameManager.instance.players.Count > 0)
             {
-                    //then targetPlayer the first player controller in the Game instance
-                    targetPlayer = GameManager.instance.players[0].pawn.gameObject;
+                targetPlayer = GameManager.instance.players[0].pawn.gameObject;
             }
         }
     }
+
+    /*public void FindAnotherTargetPlayer()
+    {
+        if(targetPlayer == null)
+        {
+            if (GameManager.instance.players.Count > 0)
+            {
+                targetPlayer = GameManager.instance.players[0].pawn.gameObject;
+            }
+        }
+    }*/
 
     /// <summary> IsHastargetPlayer()
     /// Tracks if the AI's targetPlayer exists
