@@ -100,12 +100,17 @@ public class GameManager : MonoBehaviour
             {
                 GameObject newCamera = Instantiate(cameraPrefab, player.pawn.transform.position, Quaternion.identity) as GameObject;
                 CameraController newCameraController = newCamera.AddComponent<CameraController>();
-                newCameraController.targetPlayer = player.gameObject;
                 newCameraController.playerCamera = newCamera;
+                newCameraController.targetPlayer = player.gameObject;
+                newCameraController.offset.Set(0,7,-10);
                 //cameraControllerPrefab.FindPlayer();
                 foreach (var camera in playerCameras)
                 {
                     player.pawn.playerCamera = camera;
+                    if (playerCameras.Count > players.Count)
+                    {
+                        Destroy(camera);
+                    }
                 }
             }
         }
@@ -160,7 +165,7 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayerDeath(Pawn player)
     {
-        Destroy(player.camera);
+        Destroy(player.playerCamera);
         //camerasAreSpawned = false;
         SpawnPlayer(currentSpawnPoint);
     }
@@ -273,7 +278,6 @@ public class GameManager : MonoBehaviour
                 currentMap = mapGenerator.newGeneratedMapGameObject;
                 DetermineSpawnPoints();
                 camerasAreSpawned = false;
-                SpawnPlayerCameras();
                 ResetScores();
                 ResetLives();
                 gameplayIsDeactivated = false;
