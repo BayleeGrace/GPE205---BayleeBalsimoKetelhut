@@ -6,7 +6,9 @@ public class GameManager : MonoBehaviour
 {
     #region Variables;
     public GameObject playerControllerPrefab; // Variable to reference the player controller and the tank pawn
+    public GameObject playerControllerPrefab2;
     public GameObject tankPawnPrefab; // Variable to store the player's tankPawn
+    public GameObject tankPawnPrefabTwo;
     public GameObject playerSpawnTransform; // Variable to hold the player spawn location
     public bool isPlayerSpawned = false; // Boolean to check if the player was spawned, may need to be changed later to allow for multiplayer
     public GameObject[] enemyControllerPrefabs; // Variable to reference the AI controllers and their pawns
@@ -17,13 +19,18 @@ public class GameManager : MonoBehaviour
     public static GameManager instance; // Variable to reference the GameManager
     public List<PlayerController> players; // Creates a LIST of players, even if the game is going to be single player
     public List<AIController> enemies; // Creates a LIST of enemies based on how many AIControllers that were spawned in the scene
+    public int pendingPlayers = 4;
+    [HideInInspector] public bool isMultiplayer = false;
     #endregion Variables;
+    
     #region Cameras
-    public GameObject cameraPrefab;
+    /*public GameObject cameraPrefab;
     //[HideInInspector] public GameObject newCamera;
     public CameraController cameraControllerPrefab;
     private bool camerasAreSpawned = false;
-    [HideInInspector] public List<GameObject> playerCameras;
+    [HideInInspector] public List<GameObject> playerCameras;*/
+    private GameObject playerOneCameraObj;
+    private GameObject playerTwoCamera;
     #endregion Cameras
 
     #region Score
@@ -84,15 +91,48 @@ public class GameManager : MonoBehaviour
         newPlayerPawn.noiseMaker = newPawnObj.GetComponent<NoiseMaker>();
         newPlayerPawn.noiseMakerVolume = 3;
 
+        if (isMultiplayer == false)
+        {
+            // Grab the child camera and assign it to player 2 camera
+            playerOneCameraObj = newPawnObj.transform.GetChild(1).gameObject;
+            Camera playerOneCamera = playerOneCameraObj.GetComponent<Camera>();
+            playerOneCamera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
+        }
+
         // Hook them up!
         newPlayerController.pawn = newPlayerPawn;
         newPlayerPawn.controller = newPlayerController;
 
         isPlayerSpawned = true;
-        SpawnPlayerCameras();
+        //SpawnPlayerCameras();
     }
 
-    public void SpawnPlayerCameras()
+    public void SpawnPlayerTwo(PawnSpawnPoint playerSpawn)
+    {
+        // New Player/Pawn Obj's are being contained as local variables in this function.
+        GameObject newPlayerObj = Instantiate(playerControllerPrefab2, Vector3.zero, Quaternion.identity) as GameObject; // Quaternion.identity has something to do with the rotation
+        GameObject newPawnObj = Instantiate(tankPawnPrefabTwo, playerSpawn.transform.position, Quaternion.identity) as GameObject;
+        
+        // Get the Player Controller component and the Pawn component
+        Controller newPlayerController = newPlayerObj.GetComponent<Controller>();
+        Pawn newPlayerPawn = newPawnObj.GetComponent<Pawn>();
+
+        // For every player pawn spawned in the game, add a noise maker to it and set the volume to 3
+        newPawnObj.AddComponent<NoiseMaker>();
+        newPlayerPawn.noiseMaker = newPawnObj.GetComponent<NoiseMaker>();
+        newPlayerPawn.noiseMakerVolume = 3;
+
+        // Grab the child camera and assign it to player 2 camera
+        //playerTwoCamera = newPawnObj.transform.GetChild(1).gameObject;
+
+        // Hook them up!
+        newPlayerController.pawn = newPlayerPawn;
+        newPlayerPawn.controller = newPlayerController;
+
+        isPlayerSpawned = true;
+    }
+
+    /*public void SpawnPlayerCameras()
     {
         if (camerasAreSpawned == false)
         {
@@ -115,7 +155,7 @@ public class GameManager : MonoBehaviour
             }
         }
         camerasAreSpawned = true;
-    }
+    }*/
 
     public void SpawnEnemy()
     {
@@ -150,8 +190,11 @@ public class GameManager : MonoBehaviour
                 // If that spawn point is a player spawner
                 if (randomPlayerSpawnPoint.isPlayerSpawn == true)
                 {
-                    // spawn the player at that random spawn point
                     SpawnPlayer(randomPlayerSpawnPoint);
+                    if (isMultiplayer == true)
+                    {
+                        SpawnPlayerTwo(randomPlayerSpawnPoint);
+                    }
                 }
             }
             // if the current spawn point is not a player spawn, then spawn an enemy
@@ -165,7 +208,7 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayerDeath(Pawn player)
     {
-        Destroy(player.playerCamera);
+        //Destroy(player.playerCamera);
         //camerasAreSpawned = false;
         SpawnPlayer(currentSpawnPoint);
     }
@@ -201,10 +244,10 @@ public class GameManager : MonoBehaviour
             Destroy(player.pawn.gameObject);
             Destroy(player.gameObject);
             isPlayerSpawned = false;
-            foreach (var camera in playerCameras)
+            /*foreach (var camera in playerCameras)
             {
                 Destroy(camera);
-            }
+            }*/
         }
 
         foreach (var enemy in enemies)
@@ -277,7 +320,7 @@ public class GameManager : MonoBehaviour
                 mapGenerator.SetMap();
                 currentMap = mapGenerator.newGeneratedMapGameObject;
                 DetermineSpawnPoints();
-                camerasAreSpawned = false;
+                //camerasAreSpawned = false;
                 ResetScores();
                 ResetLives();
                 gameplayIsDeactivated = false;

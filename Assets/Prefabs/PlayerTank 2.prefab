@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: -4082817322196536441}
   - component: {fileID: 3586266838650921742}
   m_Layer: 0
-  m_Name: PlayerTank
+  m_Name: PlayerTank 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -692,6 +692,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5810898333969124914, guid: 0a3f68fea05304f428a5977272b96176, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5810898333969124915, guid: 0a3f68fea05304f428a5977272b96176, type: 3}
+      propertyPath: m_NormalizedViewPortRect.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5810898333969124917, guid: 0a3f68fea05304f428a5977272b96176, type: 3}

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1934622400197168731}
   - component: {fileID: 1934622400197168708}
   m_Layer: 0
-  m_Name: PlayerController
+  m_Name: PlayerController2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,12 +43,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e0107aa90cbf8844b9bd044df9c5c24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pawn: {fileID: 2535482313733260803, guid: bd7575604cd286741add172dd74c04b0, type: 3}
-  moveForwardKey: 119
-  moveBackwardKey: 115
-  rotateClockwiseKey: 100
-  rotateCounterClockwiseKey: 97
-  shootKey: 101
+  pawn: {fileID: 2535482313733260803, guid: 6832863b0dad2f0499bd1d30d8bef2e7, type: 3}
+  moveForwardKey: 273
+  moveBackwardKey: 274
+  rotateClockwiseKey: 275
+  rotateCounterClockwiseKey: 276
+  shootKey: 303
   pauseKey: 27
   playerCamera: {fileID: 0}
   playerScore: 0

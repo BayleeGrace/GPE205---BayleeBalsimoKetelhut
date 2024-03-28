@@ -11,7 +11,7 @@ public class CameraController : MonoBehaviour
     
     public void Start()
     {
-        GameManager.instance.playerCameras.Add(this.gameObject);
+        //GameManager.instance.playerCameras.Add(this.gameObject);
         FindPlayer();
     }
     public void FixedUpdate()
@@ -44,7 +44,7 @@ public class CameraController : MonoBehaviour
 
     public void OnDestroy()
     {
-        GameManager.instance.playerCameras.Remove(this.gameObject);
+        //GameManager.instance.playerCameras.Remove(this.gameObject);
     }
 
 }
