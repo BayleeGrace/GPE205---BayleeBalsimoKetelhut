@@ -193,6 +193,7 @@ public class GameManager : MonoBehaviour
                     SpawnPlayer(randomPlayerSpawnPoint);
                     if (isMultiplayer == true)
                     {
+                        randomPlayerSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
                         SpawnPlayerTwo(randomPlayerSpawnPoint);
                     }
                 }

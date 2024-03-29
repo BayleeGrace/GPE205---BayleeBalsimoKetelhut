@@ -107,5 +107,10 @@ public class TankPawn : Pawn
             mover.isMoving = false;
         }
     }
+    
+    public void ResetLives()
+    {
+        currentLives = maxLives;
+    }
 
 }

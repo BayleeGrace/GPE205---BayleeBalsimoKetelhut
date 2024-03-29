@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class SliderChangeForMultiplayer : MonoBehaviour
 {
+
+    public Toggle toggle;
+
     public void OnSliderChange()
     {
         GameManager.instance.isMultiplayer = true;
@@ -12,6 +15,13 @@ public class SliderChangeForMultiplayer : MonoBehaviour
 
     public void OnToggleChange()
     {
-        GameManager.instance.isMultiplayer = true;
+        if (toggle.isOn)
+        {
+            GameManager.instance.isMultiplayer = true;
+        }
+        else if (!toggle.isOn)
+        {
+            GameManager.instance.isMultiplayer = false;
+        }
     }
 }
