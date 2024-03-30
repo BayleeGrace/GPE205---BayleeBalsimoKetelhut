@@ -161,7 +161,7 @@ MonoBehaviour:
   isPlayer: 1
   playerCamera: {fileID: 0}
   currentLives: 0
-  maxLives: 3
+  maxLives: 1
   shooter: {fileID: 6766521778717739339}
   tankShellPrefab: {fileID: 8063939962284642360, guid: 944d17993a4db48f4821cc89aa3436c9, type: 3}
   fireForce: 750

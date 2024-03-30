@@ -35,7 +35,6 @@ public class Health : MonoBehaviour
         // Test code, this will convert all variables to a string for the Debug Log
         if(currentHealth <= 0)
         {
-
             Pawn pawn = gameObject.GetComponent<Pawn>();
 
             if (pawn.isPlayer == true)

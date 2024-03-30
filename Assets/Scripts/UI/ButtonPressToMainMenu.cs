@@ -9,6 +9,7 @@ public class ButtonPressToMainMenu : MonoBehaviour
     {
         if (GameManager.instance != null) 
         {
+            GameManager.instance.DeactiveGameplayState();
             GameManager.instance.ActivateMainMenuScreen();
         }
     }

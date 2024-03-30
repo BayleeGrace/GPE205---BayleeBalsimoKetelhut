@@ -100,7 +100,14 @@ public abstract class AIController : Controller
         }
         else if ((GameManager.instance.players.Count > 0) || IsHasTarget() == false)
         {
-            TargetPlayerOne();
+            if (GameManager.instance.players[0] != null)
+            {
+                TargetPlayerOne();
+            }
+            else if (GameManager.instance.players[1] != null)
+            {
+                TargetPlayerTwo();
+            }
         }
         else
         {
@@ -432,6 +439,18 @@ public abstract class AIController : Controller
             if (GameManager.instance.players.Count > 0)
             {
                 targetPlayer = GameManager.instance.players[0].pawn.gameObject;
+            }
+        }
+    }
+
+    public void TargetPlayerTwo()
+    {
+        // If the GameManager exists
+        if(GameManager.instance != null)
+        {
+            if (GameManager.instance.players.Count > 0)
+            {
+                targetPlayer = GameManager.instance.players[1].pawn.gameObject;
             }
         }
     }

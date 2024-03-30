@@ -75,11 +75,18 @@ public class TankerAIController : AIController
                     break;
             }
         }
-        else if (GameManager.instance.players != null)
+        else if ((GameManager.instance.players.Count > 0) || IsHasTarget() == false)
         {
-            TargetPlayerOne();
+            if (GameManager.instance.players[0] != null)
+            {
+                base.TargetPlayerOne();
+            }
+            else if (GameManager.instance.players[1] != null)
+            {
+                base.TargetPlayerTwo();
+            }
         }
-        else if (GameManager.instance.players == null)
+        else if (GameManager.instance.players.Count <= 0)
         {
             ChangeState(AIState.Patrol);
         }

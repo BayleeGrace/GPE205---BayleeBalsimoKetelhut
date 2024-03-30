@@ -96,6 +96,7 @@ public class GameManager : MonoBehaviour
             // Grab the child camera and assign it to player 2 camera
             playerOneCameraObj = newPawnObj.transform.GetChild(1).gameObject;
             Camera playerOneCamera = playerOneCameraObj.GetComponent<Camera>();
+            // Set it to the entrie screen
             playerOneCamera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
         }
 
@@ -211,7 +212,14 @@ public class GameManager : MonoBehaviour
     {
         //Destroy(player.playerCamera);
         //camerasAreSpawned = false;
-        SpawnPlayer(currentSpawnPoint);
+        if (isMultiplayer == false)
+        {
+            SpawnPlayer(currentSpawnPoint);
+        }
+        else if (isMultiplayer == true)
+        {
+            SpawnPlayerTwo(currentSpawnPoint);
+        }
     }
 
     public GameObject RandomEnemyPrefab()
@@ -235,10 +243,9 @@ public class GameManager : MonoBehaviour
         PauseMenuOptionsScreenStateObject.SetActive(false);
     }
 
-    private void DeactiveGameplayState()
+    public void DeactiveGameplayState()
     {
         gameplayIsDeactivated = true;
-        GameplayStateObject.SetActive(false);
         Destroy(currentMap);
         foreach (var player in players)
         {
@@ -258,6 +265,7 @@ public class GameManager : MonoBehaviour
                 Destroy(enemy.transform.parent.gameObject);
             }
         }
+        GameplayStateObject.SetActive(false);
     }
 
     public void DeactivatePauseMenuState()
@@ -281,11 +289,12 @@ public class GameManager : MonoBehaviour
     public void ActivateMainMenuScreen()
     {
         // Deactivate all states
-        DeactivateAllStates();
         DeactiveGameplayState();
+        DeactivateAllStates();
         DeactivatePauseMenuState();
         // Activate the title screen
         MainMenuStateObject.SetActive(true); // Set activate activates that object
+        //Debug.Log("Main menu opened");
     }
 
     public void ActivateOptionsScreen()
@@ -337,12 +346,14 @@ public class GameManager : MonoBehaviour
         // Activate the title screen
         GameOverScreenStateObject.SetActive(true); // Set activate activates that object
         // TODO: Set highScore and other scores in results
+        CompareScoreValues();
     }
 
     public void ActivatePauseMenuScreen()
     {
         // Deactivate all states
         DeactivateAllStates();
+        //GameplayStateObject.SetActive(false);
         // Activate the pause menu screen
         PauseMenuSceenStateObject.SetActive(true);
     }
